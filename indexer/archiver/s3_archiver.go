@@ -57,10 +57,23 @@ func (arc S3Archiver) Commit(snapshot *Snapshot) error {
 		return err
 	}
 
+	key := fmt.Sprintf(
+		"%s/%s.json.gz",
+		snapshot.Meta.Time.Format("2006-01-02"),
+		snapshot.ID,
+	)
+
+	tagging := fmt.Sprintf(
+		"App=%s&Chain=%s",
+		snapshot.Meta.AppName+"/"+snapshot.Meta.AppVersion,
+		snapshot.Meta.ChainVersion,
+	)
+
 	_, err = arc.uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(arc.bucket),
-		Key:    aws.String(fmt.Sprintf("%s.json.gz", snapshot.ID)),
-		Body:   file,
+		Bucket:  aws.String(arc.bucket),
+		Key:     aws.String(key),
+		Tagging: aws.String(tagging),
+		Body:    file,
 	})
 
 	return err
