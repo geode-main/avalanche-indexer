@@ -1,0 +1,10 @@
+.DS_Store
+*.json
+tmp/*
+log/*
+dist/*
+Procfile
+.env*
+avalanche-indexer
+store/migrations/migrations.go
+store/queries/queries.go
