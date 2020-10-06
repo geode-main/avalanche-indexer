@@ -30,5 +30,8 @@ CREATE UNIQUE INDEX idx_validators_node_id
 CREATE INDEX idx_validators_stake_amount
   ON validators(stake_amount);
 
+CREATE INDEX idx_validators_active
+  ON validators(active);
+
 -- +goose Down
 DROP TABLE validators;
