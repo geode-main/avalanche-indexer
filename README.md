@@ -97,7 +97,7 @@ avalanche-indexer -config path/to/config.json -cmd=worker
 Start the API server:
 
 ```bash
-near-indexer -config path/to/config.json -cmd=server
+avalanche-indexer -config path/to/config.json -cmd=server
 ```
 
 ## API Reference
