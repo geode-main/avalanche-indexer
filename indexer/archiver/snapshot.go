@@ -8,10 +8,15 @@ import (
 	"time"
 )
 
+const (
+	snapshotFormatVersion = "1"
+)
+
 type Snapshot struct {
-	ID   string                 `json:"id"`
-	Data map[string]interface{} `json:"data"`
-	Meta Metadata               `json:"meta"`
+	ID      string                 `json:"id"`
+	Version string                 `json:"version"`
+	Data    map[string]interface{} `json:"data"`
+	Meta    Metadata               `json:"meta"`
 }
 
 type Metadata struct {
@@ -30,9 +35,10 @@ func NewSnapshot(id string) (*Snapshot, error) {
 	}
 
 	return &Snapshot{
-		ID:   id,
-		Data: map[string]interface{}{},
-		Meta: Metadata{},
+		ID:      id,
+		Version: snapshotFormatVersion,
+		Data:    map[string]interface{}{},
+		Meta:    Metadata{},
 	}, nil
 }
 

@@ -64,7 +64,8 @@ func (arc S3Archiver) Commit(snapshot *Snapshot) error {
 	)
 
 	tagging := fmt.Sprintf(
-		"App=%s&Chain=%s",
+		"Version=%s&App=%s&Chain=%s",
+		snapshot.Version,
 		snapshot.Meta.AppName+"/"+snapshot.Meta.AppVersion,
 		snapshot.Meta.ChainVersion,
 	)
