@@ -16,14 +16,16 @@ jobs:
       - name: Setup
         uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: 1.15
 
       - name: Set ref vars
         id: refs
         run: |
+          echo -n ${GITHUB_REF#refs/tags/} | sed s/[.]/_/g | sed s/^v// > .version
           echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
           echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+          echo ::set-output name=VERSION::$(cat .version)
 
       - name: Install tools
         run: make setup
@@ -52,3 +54,12 @@ jobs:
           asset_path: ./avalanche-indexer
           asset_name: avalanche-indexer
           asset_content_type: application/x-mach-binary
+
+      - name: Upload Release Asset to S3
+        uses: ItsKarma/aws-cli@v1.70.0
+        with:
+          args: s3 cp ./avalanche-indexer s3://figment-provisioning/avalanche/avalanche-indexer${{ steps.refs.outputs.VERSION }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PROVISIONING_ACCESS }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PROVISIONING_SECRET }}
+          AWS_REGION: "ca-central-1"
