@@ -56,7 +56,7 @@ jobs:
       - name: Upload Release Asset to S3
         uses: ItsKarma/aws-cli@v1.70.0
         with:
-          args: s3 cp /github/workspace/.release/avalanche-indexer s3://figment-provisioning/${{ github.ref }}/avalanche/avalanche-indexer-${{ steps.refs.outputs.SOURCE_TAG }}
+          args: s3 cp ./avalanche-indexer s3://figment-provisioning/${{ github.ref }}/avalanche/avalanche-indexer-${{ steps.refs.outputs.SOURCE_TAG }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PROVISIONING_ACCESS }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PROVISIONING_SECRET }}
