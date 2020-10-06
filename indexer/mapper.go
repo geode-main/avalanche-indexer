@@ -42,9 +42,14 @@ func initValidator(validator *client.Validator, ts time.Time) (*model.Validator,
 	}
 
 	// calculate the current validation progress
-	timeLeft := endTime.Sub(ts).Milliseconds()
-	timeTotal := endTime.Sub(startTime).Milliseconds()
-	progressPercent := util.PercentOf(timeLeft, timeTotal)
+	var progressPercent float64
+	if endTime.After(ts) {
+		timeElapsed := ts.Sub(startTime).Milliseconds()
+		timeTotal := endTime.Sub(startTime).Milliseconds()
+		progressPercent = util.PercentOf(timeElapsed, timeTotal)
+	} else {
+		progressPercent = 100.0
+	}
 
 	return &model.Validator{
 		NodeID:                 validator.NodeID,
