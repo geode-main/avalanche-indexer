@@ -1,10 +1,9 @@
 package indexer
 
 import (
+	"github.com/figment-networks/indexing-engine/pipeline"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
-
-	"github.com/figment-networks/indexing-engine/pipeline"
 
 	"github.com/figment-networks/avalanche-indexer/model"
 	"github.com/figment-networks/avalanche-indexer/store"
@@ -25,13 +24,12 @@ func (t PersistorTask) Run(ctx context.Context, p pipeline.Payload) error {
 
 	payload := p.(*Payload)
 
-	lastHeight, err := t.db.Validators.LastHeight()
+	skip, err := shouldSkipHeight(t.db, payload)
 	if err != nil {
-		t.logger.WithError(err).Error("cant fetch last height")
 		return err
 	}
-	if payload.Height <= lastHeight {
-		t.logger.Info("no height changes detected, persistor skipped")
+	if skip {
+		t.logger.Info("no height changes detected, archiver skipped")
 		return nil
 	}
 

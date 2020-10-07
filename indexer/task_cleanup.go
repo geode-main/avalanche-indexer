@@ -3,9 +3,10 @@ package indexer
 import (
 	"context"
 
-	"github.com/figment-networks/avalanche-indexer/store"
 	"github.com/figment-networks/indexing-engine/pipeline"
 	"github.com/sirupsen/logrus"
+
+	"github.com/figment-networks/avalanche-indexer/store"
 )
 
 type CleanupTask struct {

@@ -3,10 +3,11 @@ package indexer
 import (
 	"context"
 
-	"github.com/figment-networks/avalanche-indexer/model"
-	"github.com/figment-networks/avalanche-indexer/util"
 	"github.com/figment-networks/indexing-engine/pipeline"
 	"github.com/sirupsen/logrus"
+
+	"github.com/figment-networks/avalanche-indexer/model"
+	"github.com/figment-networks/avalanche-indexer/util"
 )
 
 type ParserTask struct {

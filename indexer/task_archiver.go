@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/figment-networks/avalanche-indexer/indexer/archiver"
 	"github.com/figment-networks/avalanche-indexer/store"
 	"github.com/figment-networks/indexing-engine/pipeline"
 	"github.com/sirupsen/logrus"
+
+	"github.com/figment-networks/avalanche-indexer/indexer/archiver"
 )
 
 type ArchiverTask struct {
@@ -31,11 +32,11 @@ func (t ArchiverTask) Run(ctx context.Context, p pipeline.Payload) error {
 
 	payload := p.(*Payload)
 
-	lastHeight, err := t.db.Validators.LastHeight()
+	skip, err := shouldSkipHeight(t.db, payload)
 	if err != nil {
 		return err
 	}
-	if payload.Height <= lastHeight {
+	if skip {
 		t.logger.Info("no height changes detected, archiver skipped")
 		return nil
 	}

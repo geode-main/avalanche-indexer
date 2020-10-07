@@ -107,6 +107,17 @@ func runChain(p *Payload, fns ...func(p *Payload) error) error {
 	return nil
 }
 
+func shouldSkipHeight(db *store.DB, p *Payload) (bool, error) {
+	// height, err := db.Validators.LastHeight()
+	// if err != nil {
+	// 	return false, err
+	// }
+	// return p.HeightChanged(height), nil
+
+	// dont skip heights for now
+	return false, nil
+}
+
 func logStart(t pipeline.Task, logger *logrus.Logger) {
 	logger.WithField("name", t.GetName()).Debug("task started")
 }

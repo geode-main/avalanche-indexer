@@ -59,6 +59,10 @@ func (p *Payload) MarkAsProcessed() {
 	p.Processed = true
 }
 
+func (p *Payload) HeightChanged(val int64) bool {
+	return p.Height > val
+}
+
 func NewPayloadFactory() PayloadFactory {
 	return PayloadFactory{}
 }
