@@ -170,8 +170,8 @@ func (t ParserTask) prepareValidators(payload *Payload) error {
 		record.DelegationsPercent = util.PercentOf(int64(len(validator.Delegators)), int64(delegationsCount))
 		record.DelegatedAmount = delegatedAmountMap[validator.NodeID]
 		record.DelegatedAmountPercent = util.PercentOf(delegatedAmountMap[validator.NodeID], delegatedAmount)
-		record.Capacity = 0        // TODO
-		record.CapacityPercent = 0 // TODO
+		record.Capacity = record.StakeAmount*4 - record.DelegatedAmount
+		record.CapacityPercent = util.PercentOf(record.DelegatedAmount, record.StakeAmount*4)
 
 		seqRecord := model.ValidatorSeq{
 			Time:                   payload.SyncTime,
