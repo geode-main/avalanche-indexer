@@ -35,17 +35,17 @@ func (t FetcherTask) Run(ctx context.Context, p pipeline.Payload) error {
 		return err
 	}
 
+	height, err := t.rpc.Platform.GetCurrentHeight()
+	if err != nil {
+		return err
+	}
+
 	validatorsResp, err := t.rpc.Platform.GetCurrentValidators()
 	if err != nil {
 		return err
 	}
 
 	pendingValidatorsResp, err := t.rpc.Platform.GetPendingValidators()
-	if err != nil {
-		return err
-	}
-
-	height, err := t.rpc.Platform.GetCurrentHeight()
 	if err != nil {
 		return err
 	}

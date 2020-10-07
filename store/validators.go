@@ -12,6 +12,21 @@ type ValidatorsStore struct {
 	*gorm.DB
 }
 
+func (s ValidatorsStore) LastHeight() (int64, error) {
+	rows, err := s.DB.Raw(queries.ValidatorLastHeight).Rows()
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return 0, nil
+	}
+
+	var result int64
+	return result, rows.Scan(&result)
+}
+
 func (s ValidatorsStore) FindByNodeID(id string) (*model.Validator, error) {
 	result := &model.Validator{}
 

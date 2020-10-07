@@ -5,11 +5,13 @@ import (
 	"fmt"
 
 	"github.com/figment-networks/avalanche-indexer/indexer/archiver"
+	"github.com/figment-networks/avalanche-indexer/store"
 	"github.com/figment-networks/indexing-engine/pipeline"
 	"github.com/sirupsen/logrus"
 )
 
 type ArchiverTask struct {
+	db     *store.DB
 	arc    archiver.Archiver
 	logger *logrus.Logger
 }
@@ -29,6 +31,15 @@ func (t ArchiverTask) Run(ctx context.Context, p pipeline.Payload) error {
 
 	payload := p.(*Payload)
 
+	lastHeight, err := t.db.Validators.LastHeight()
+	if err != nil {
+		return err
+	}
+	if payload.Height <= lastHeight {
+		t.logger.Info("no height changes detected, archiver skipped")
+		return nil
+	}
+
 	id := fmt.Sprintf("%v", payload.SyncTime.Unix())
 	snapshot, err := archiver.NewSnapshot(id)
 	if err != nil {
@@ -43,12 +54,10 @@ func (t ArchiverTask) Run(ctx context.Context, p pipeline.Payload) error {
 	snapshot.Meta.Time = payload.SyncTime
 	snapshot.Meta.Height = &payload.Height
 
-	//snapshot.Add("peers", payload.Peers)
+	snapshot.Add("peers_count", len(payload.Peers))
 	snapshot.Add("blockchains", payload.Blockchains)
 	snapshot.Add("current_validators", payload.CurrentValidators)
 	snapshot.Add("current_delegators", payload.CurrentDelegators)
-	//snapshot.Add("pending_validators", payload.PendingValidators)
-	//snapshot.Add("pending_delegators", payload.PendingDelegators)
 	snapshot.Add("min_stake", payload.MinStake)
 	snapshot.Add("tx_fee", payload.RawTxFee)
 

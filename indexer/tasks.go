@@ -47,7 +47,7 @@ func NewAnalyzerTask(db *store.DB, logger *logrus.Logger) pipeline.Task {
 	}
 }
 
-func NewArchiverTask(configStr string, logger *logrus.Logger) pipeline.Task {
+func NewArchiverTask(configStr string, db *store.DB, logger *logrus.Logger) pipeline.Task {
 	var arc archiver.Archiver
 
 	if configStr != "" {
@@ -87,6 +87,7 @@ func NewArchiverTask(configStr string, logger *logrus.Logger) pipeline.Task {
 	return &ArchiverTask{
 		logger: logger,
 		arc:    arc,
+		db:     db,
 	}
 }
 

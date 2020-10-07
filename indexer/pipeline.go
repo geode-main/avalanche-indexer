@@ -22,8 +22,8 @@ func NewPipeline(db *store.DB, rpc *client.Client, logger *logrus.Logger, archiv
 
 	fetcherStage := pipeline.NewStageWithTasks(
 		pipeline.StageFetcher,
-		NewFetcherTask(rpc, logger),             // fetch data from the network
-		NewArchiverTask(archiverConfig, logger), // dump client responses to the disk
+		NewFetcherTask(rpc, logger),                 // fetch data from the network
+		NewArchiverTask(archiverConfig, db, logger), // dump client responses to the disk
 	)
 
 	parserStage := pipeline.NewStageWithTasks(

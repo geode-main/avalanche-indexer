@@ -25,6 +25,16 @@ func (t PersistorTask) Run(ctx context.Context, p pipeline.Payload) error {
 
 	payload := p.(*Payload)
 
+	lastHeight, err := t.db.Validators.LastHeight()
+	if err != nil {
+		t.logger.WithError(err).Error("cant fetch last height")
+		return err
+	}
+	if payload.Height <= lastHeight {
+		t.logger.Info("no height changes detected, persistor skipped")
+		return nil
+	}
+
 	return runChain(
 		payload,
 		t.createAddresses,
