@@ -29,7 +29,7 @@ func (s ValidatorsStore) FindAll() ([]model.Validator, error) {
 	err := s.
 		Model(&model.Validator{}).
 		Order("stake_amount").
-		Find(&result).
+		Find(&result, "active = ?", true).
 		Error
 
 	return result, checkErr(err)
