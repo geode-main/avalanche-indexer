@@ -67,6 +67,8 @@ func initValidator(validator *client.Validator, ts time.Time) (*model.Validator,
 		DelegatedAmount:        0,            // filled later in the pipeline
 		DelegatedAmountPercent: 0,            // filled later in the pipeline
 		Uptime:                 uptime * 100, // we want this in %
+		CreatedAt:              ts,
+		UpdatedAt:              ts,
 	}, nil
 }
 
