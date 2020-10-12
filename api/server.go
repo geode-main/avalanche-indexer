@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -62,22 +61,22 @@ func (s *Server) handleIndex(c *gin.Context) {
 	})
 }
 
-func (s *Server) isHealthy() bool {
+func (s *Server) check() error {
 	if err := s.db.Test(); err != nil {
-		return false
+		return err
 	}
-
 	if _, err := s.rpc.Info.NodeVersion(); err != nil {
-		return false
+		return err
 	}
-
-	return true
+	return nil
 }
 
 func (s *Server) handleHealth(c *gin.Context) {
-	jsonOk(c, gin.H{
-		"healthy": s.isHealthy(),
-	})
+	if err := s.check(); err != nil {
+		jsonOk(c, gin.H{"healthy": true})
+	} else {
+		jsonError(c, 400, err)
+	}
 }
 
 func (s *Server) handleStatus(c *gin.Context) {
@@ -131,7 +130,7 @@ func (s *Server) handleNetworkStats(c *gin.Context) {
 		}
 	}
 
-	stats, err := s.db.Networks.GetStats(time.Now(), bucket, limit)
+	stats, err := s.db.Networks.GetStats(bucket, limit)
 	if shouldReturn(c, err) {
 		return
 	}
