@@ -27,7 +27,7 @@ func (s DelegatorsStore) FindByNodeID(id string) ([]model.Delegation, error) {
 
 	err := s.
 		Model(&model.Delegation{}).
-		Where("node_id = ?", id).
+		Where("node_id = ? AND active = ?", id, true).
 		Find(&result).
 		Error
 
