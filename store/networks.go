@@ -27,13 +27,12 @@ func (s NetworksStore) CreateStats(t time.Time, bucket string) error {
 }
 
 // GetStats returns a set of stats for a given time bucket
-func (s NetworksStore) GetStats(t time.Time, bucket string, limit int) ([]model.NetworkStat, error) {
-	startTime, _ := getTimeRange(t, bucket)
+func (s NetworksStore) GetStats(bucket string, limit int) ([]model.NetworkStat, error) {
 	result := []model.NetworkStat{}
 
 	err := s.
 		Model(&model.NetworkStat{}).
-		Where("time = ? AND bucket = ?", startTime, bucket).
+		Where("bucket = ?", bucket).
 		Order("time ASC").
 		Limit(limit).
 		Find(&result).
