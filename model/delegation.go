@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Delegation struct {
-	ID              string    `json:"id"`
+	ID              int       `json:"-"`
 	ReferenceID     string    `json:"reference_id"`
 	NodeID          string    `json:"node_id"`
 	StakeAmount     int64     `json:"stake_amount"`

@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -131,7 +130,7 @@ func (s *Server) handleNetworkStats(c *gin.Context) {
 		}
 	}
 
-	stats, err := s.db.Networks.GetStats(time.Now(), bucket, limit)
+	stats, err := s.db.Networks.GetStats(bucket, limit)
 	if shouldReturn(c, err) {
 		return
 	}

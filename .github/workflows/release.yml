@@ -58,7 +58,7 @@ jobs:
       - name: Upload Release Asset to S3
         uses: ItsKarma/aws-cli@v1.70.0
         with:
-          args: s3 cp ./avalanche-indexer s3://figment-provisioning/avalanche/avalanche-indexer${{ steps.refs.outputs.VERSION }}
+          args: s3 cp ./avalanche-indexer s3://figment-provisioning/avalanche/avalanche-indexer${{ steps.refs.outputs.VERSION }} --acl public-read
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PROVISIONING_ACCESS }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PROVISIONING_SECRET }}
