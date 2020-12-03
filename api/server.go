@@ -73,10 +73,11 @@ func (s *Server) check() error {
 
 func (s *Server) handleHealth(c *gin.Context) {
 	if err := s.check(); err != nil {
-		jsonOk(c, gin.H{"healthy": true})
-	} else {
 		jsonError(c, 400, err)
+		return
 	}
+
+	jsonOk(c, gin.H{"healthy": true})
 }
 
 func (s *Server) handleStatus(c *gin.Context) {
