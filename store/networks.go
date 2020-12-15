@@ -33,7 +33,7 @@ func (s NetworksStore) GetStats(bucket string, limit int) ([]model.NetworkStat, 
 	err := s.
 		Model(&model.NetworkStat{}).
 		Where("bucket = ?", bucket).
-		Order("time ASC").
+		Order("time DESC").
 		Limit(limit).
 		Find(&result).
 		Error
