@@ -119,18 +119,20 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 	avgDelegationFee = avgDelegationFee / float64(validatorsCount)
 
 	payload.NetworkMetric = &model.NetworkMetric{
-		Time:                   payload.SyncTime,
-		Height:                 payload.Height,
-		PeersCount:             len(payload.Peers),
-		BlockchainsCount:       len(payload.Blockchains),
-		ActiveValidatorsCount:  len(payload.CurrentValidators),
-		PendingValidatorsCount: len(payload.PendingValidators),
-		MinValidatorStake:      payload.MinValidatorStake,
-		MinDelegationStake:     payload.MinDelegatorStake,
-		TxFee:                  int(payload.TxFee),
-		CreationTxFee:          int(payload.CreationTxFee),
-		Uptime:                 avgUptime,
-		DelegationFee:          avgDelegationFee,
+		Time:                    payload.SyncTime,
+		Height:                  payload.Height,
+		PeersCount:              len(payload.Peers),
+		BlockchainsCount:        len(payload.Blockchains),
+		ActiveValidatorsCount:   len(payload.CurrentValidators),
+		PendingValidatorsCount:  len(payload.PendingValidators),
+		ActiveDelegationsCount:  len(payload.Delegations),
+		PendingDelegationsCount: len(payload.PendingDelegators),
+		MinValidatorStake:       payload.MinValidatorStake,
+		MinDelegationStake:      payload.MinDelegatorStake,
+		TxFee:                   int(payload.TxFee),
+		CreationTxFee:           int(payload.CreationTxFee),
+		Uptime:                  avgUptime,
+		DelegationFee:           avgDelegationFee,
 	}
 
 	return nil
