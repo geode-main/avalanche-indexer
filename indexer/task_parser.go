@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/figment-networks/avalanche-indexer/model"
+	"github.com/figment-networks/avalanche-indexer/model/types"
 	"github.com/figment-networks/avalanche-indexer/util"
 )
 
@@ -99,6 +100,8 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 	validatorsCount := len(payload.CurrentValidators)
 	avgUptime := float64(0)
 	avgDelegationFee := float64(0)
+	totalStaked := types.NewAmount("0")
+	totalDelegated := types.NewAmount("0")
 
 	for _, validator := range payload.CurrentValidators {
 		uptime, err := util.ParseFloat32(validator.Uptime)
@@ -113,6 +116,12 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 
 		avgUptime += uptime * 100
 		avgDelegationFee += fee
+
+		totalStaked = totalStaked.Add(types.NewAmount(validator.StakeAmount))
+	}
+
+	for _, delegation := range payload.CurrentValidators {
+		totalDelegated = totalDelegated.Add(types.NewAmount(delegation.StakeAmount))
 	}
 
 	avgUptime = avgUptime / float64(validatorsCount)
@@ -133,6 +142,8 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 		CreationTxFee:           int(payload.CreationTxFee),
 		Uptime:                  avgUptime,
 		DelegationFee:           avgDelegationFee,
+		TotalStaked:             totalStaked,
+		TotalDelegated:          totalDelegated,
 	}
 
 	return nil
