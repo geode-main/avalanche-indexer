@@ -6,20 +6,14 @@ import (
 
 	"github.com/figment-networks/avalanche-indexer/client"
 	"github.com/figment-networks/avalanche-indexer/model"
+	"github.com/figment-networks/avalanche-indexer/model/types"
 	"github.com/figment-networks/avalanche-indexer/util"
 )
 
 // initValidator builds a new validator record from the raw client data
 func initValidator(validator *client.Validator, ts time.Time) (*model.Validator, error) {
-	stake, err := util.ParseInt64(validator.StakeAmount)
-	if err != nil {
-		return nil, err
-	}
-
-	reward, err := util.ParseInt64(validator.PotentialReward)
-	if err != nil {
-		return nil, err
-	}
+	stake := types.NewAmount(validator.StakeAmount)
+	reward := types.NewAmount(validator.PotentialReward)
 
 	startTime, err := util.ParseUnixTime(validator.StartTime)
 	if err != nil {
@@ -63,25 +57,18 @@ func initValidator(validator *client.Validator, ts time.Time) (*model.Validator,
 		ActiveProgressPercent:  progressPercent,
 		DelegationFee:          delegationFee,
 		DelegationsCount:       len(validator.Delegators),
-		DelegationsPercent:     0,            // filled later in the pipeline
-		DelegatedAmount:        0,            // filled later in the pipeline
-		DelegatedAmountPercent: 0,            // filled later in the pipeline
-		Uptime:                 uptime * 100, // we want this in %
+		DelegationsPercent:     0,                       // filled later in the pipeline
+		DelegatedAmount:        types.NewInt64Amount(0), // filled later in the pipeline
+		DelegatedAmountPercent: 0,                       // filled later in the pipeline
+		Uptime:                 uptime * 100,            // we want this in %
 		CreatedAt:              ts,
 		UpdatedAt:              ts,
 	}, nil
 }
 
 func initDelegation(delegator *client.Delegator) (result model.Delegation, err error) {
-	amount, err := util.ParseInt64(delegator.StakeAmount)
-	if err != nil {
-		return result, err
-	}
-
-	reward, err := util.ParseInt64(delegator.PotentialReward)
-	if err != nil {
-		return result, err
-	}
+	amount := types.NewAmount(delegator.StakeAmount)
+	reward := types.NewAmount(delegator.PotentialReward)
 
 	startTime, err := util.ParseUnixTime(delegator.StartTime)
 	if err != nil {

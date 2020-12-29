@@ -10,6 +10,7 @@ require (
 	github.com/jessevdk/go-assets v0.0.0-20160921144138-4f4301a06e15
 	github.com/pressly/goose v2.6.0+incompatible
 	github.com/sirupsen/logrus v1.7.0
+	github.com/stretchr/testify v1.6.1
 	github.com/tuvistavie/securerandom v0.0.0-20140719024926-15512123a948
 	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 	gorm.io/driver/postgres v1.0.2

@@ -8,7 +8,9 @@ INSERT INTO network_stats (
   pending_validators,
   active_delegations,
   pending_delegations,
-  uptime
+  uptime,
+  total_staked,
+  total_delegated
 )
 SELECT
   DATE_TRUNC('@bucket', time),
@@ -20,7 +22,9 @@ SELECT
   AVG(pending_validators_count),
   AVG(active_delegations_count),
   AVG(pending_delegations_count),
-  ROUND(AVG(uptime), 4)
+  ROUND(AVG(uptime), 4),
+  MAX(total_staked),
+  MAX(total_delegated)
 FROM
   network_metrics
 WHERE
@@ -37,4 +41,6 @@ SET
   pending_validators  = excluded.pending_validators,
   active_delegations  = excluded.active_delegations,
   pending_delegations = excluded.pending_delegations,
-  uptime              = excluded.uptime
+  uptime              = excluded.uptime,
+  total_staked        = excluded.total_staked,
+  total_delegated     = excluded.total_delegated

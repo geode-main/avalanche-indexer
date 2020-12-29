@@ -2,4 +2,4 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- +goose Down
--- NOOP
+DROP EXTENSION IF EXISTS "uuid-ossp";

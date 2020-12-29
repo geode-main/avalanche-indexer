@@ -1,15 +1,19 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/figment-networks/avalanche-indexer/model/types"
+)
 
 type ValidatorSeq struct {
 	ID                     int
 	Time                   time.Time
 	Height                 int64
 	NodeID                 string
-	StakeAmount            int64
+	StakeAmount            types.Amount
 	StakePercent           float64
-	PotentialReward        int64
+	PotentialReward        types.Amount
 	RewardAddress          string
 	Active                 bool
 	ActiveStartTime        time.Time
@@ -17,7 +21,7 @@ type ValidatorSeq struct {
 	ActiveProgressPercent  float64
 	DelegationsCount       int
 	DelegationsPercent     float64
-	DelegatedAmount        int64
+	DelegatedAmount        types.Amount
 	DelegatedAmountPercent float64
 	DelegationFee          float64
 	Uptime                 float64

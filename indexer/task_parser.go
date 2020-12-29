@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/figment-networks/avalanche-indexer/model"
+	"github.com/figment-networks/avalanche-indexer/model/types"
 	"github.com/figment-networks/avalanche-indexer/util"
 )
 
@@ -99,6 +100,8 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 	validatorsCount := len(payload.CurrentValidators)
 	avgUptime := float64(0)
 	avgDelegationFee := float64(0)
+	totalStaked := types.NewAmount("0")
+	totalDelegated := types.NewAmount("0")
 
 	for _, validator := range payload.CurrentValidators {
 		uptime, err := util.ParseFloat32(validator.Uptime)
@@ -113,6 +116,12 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 
 		avgUptime += uptime * 100
 		avgDelegationFee += fee
+
+		totalStaked = totalStaked.Add(types.NewAmount(validator.StakeAmount))
+	}
+
+	for _, delegation := range payload.Delegations {
+		totalDelegated = totalDelegated.Add(delegation.StakeAmount)
 	}
 
 	avgUptime = avgUptime / float64(validatorsCount)
@@ -133,6 +142,8 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 		CreationTxFee:           int(payload.CreationTxFee),
 		Uptime:                  avgUptime,
 		DelegationFee:           avgDelegationFee,
+		TotalStaked:             totalStaked,
+		TotalDelegated:          totalDelegated,
 	}
 
 	return nil
@@ -141,21 +152,18 @@ func (t ParserTask) prepareNetworkMetric(payload *Payload) error {
 // prepareValidators builds a new set of validator records
 func (t ParserTask) prepareValidators(payload *Payload) error {
 	delegationsCount := 0
-	delegatedAmount := int64(0)
-	delegatedAmountMap := map[string]int64{}
+	delegatedAmount := types.NewInt64Amount(0)
+	delegatedAmountMap := map[string]types.Amount{}
 
 	for _, validator := range payload.CurrentValidators {
-		validatorAmount := int64(0)
+		validatorAmount := types.NewAmount(validator.StakeAmount)
 
 		for _, d := range validator.Delegators {
-			amount, err := util.ParseInt64(d.StakeAmount)
-			if err != nil {
-				return err
-			}
+			amount := types.NewAmount(d.StakeAmount)
 
 			delegationsCount++
-			delegatedAmount += amount
-			validatorAmount += amount
+			delegatedAmount = delegatedAmount.Add(amount)
+			validatorAmount = validatorAmount.Add(amount)
 		}
 
 		delegatedAmountMap[validator.NodeID] = validatorAmount
@@ -172,9 +180,9 @@ func (t ParserTask) prepareValidators(payload *Payload) error {
 		record.StakePercent = payload.ActiveValidatorShare[validator.NodeID]
 		record.DelegationsPercent = util.PercentOf(int64(len(validator.Delegators)), int64(delegationsCount))
 		record.DelegatedAmount = delegatedAmountMap[validator.NodeID]
-		record.DelegatedAmountPercent = util.PercentOf(delegatedAmountMap[validator.NodeID], delegatedAmount)
-		record.Capacity = record.StakeAmount*4 - record.DelegatedAmount
-		record.CapacityPercent = util.PercentOf(record.DelegatedAmount, record.StakeAmount*4)
+		record.DelegatedAmountPercent = delegatedAmountMap[validator.NodeID].PercentOf(delegatedAmount)
+		record.Capacity = record.StakeAmount.Mul(types.NewInt64Amount(4)).Sub(record.DelegatedAmount)
+		record.CapacityPercent = record.DelegatedAmount.PercentOf(record.StakeAmount.Mul(types.NewInt64Amount(4)))
 
 		seqRecord := model.ValidatorSeq{
 			Time:                   payload.SyncTime,
@@ -206,7 +214,6 @@ func (t ParserTask) prepareValidators(payload *Payload) error {
 // prepareDelegations builds a new set of delegation records
 func (t ParserTask) prepareDelegations(payload *Payload) error {
 	for _, validator := range payload.CurrentValidators {
-
 		delegations, err := initDelegations(&validator, payload.SyncTime)
 		if err != nil {
 			return err
