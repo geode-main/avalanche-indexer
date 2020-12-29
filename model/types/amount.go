@@ -9,6 +9,8 @@ import (
 
 var (
 	errInvalidAmount = errors.New("invalid amount")
+
+	zero = new(big.Int)
 )
 
 // Amount represense a NEAR yocto
@@ -74,6 +76,26 @@ func (a Amount) Sub(b Amount) Amount {
 	n := new(big.Int)
 	n = n.Sub(a.Int, b.Int)
 	return Amount{n}
+}
+
+// Mul multiplies two numbers
+func (a Amount) Mul(b Amount) Amount {
+	n := new(big.Int)
+	n = n.Mul(a.Int, b.Int)
+	return Amount{n}
+}
+
+func (a Amount) PercentOf(b Amount) float64 {
+	if b.Int.Cmp(zero) == 0 {
+		return float64(0.0)
+	}
+
+	x := new(big.Float).SetInt(a.Int)
+	x = x.Mul(x, big.NewFloat(100.0))
+	y := new(big.Float).SetInt(b.Int)
+
+	result, _ := new(big.Float).Quo(x, y).Float64()
+	return result
 }
 
 // Scan assigns the value from interface
