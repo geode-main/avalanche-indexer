@@ -107,6 +107,8 @@ func (a *Amount) Scan(value interface{}) error {
 	n := new(big.Int)
 
 	switch v := value.(type) {
+	case int64:
+		a.Int = n.SetInt64(v)
 	case string:
 		n, ok := n.SetString(v, 10)
 		if !ok {

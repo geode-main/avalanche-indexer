@@ -7,10 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/figment-networks/avalanche-indexer/util"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/figment-networks/avalanche-indexer/util"
 )
 
 var ErrNotFound = gorm.ErrRecordNotFound
