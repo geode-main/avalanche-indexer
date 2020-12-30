@@ -156,7 +156,7 @@ func (t ParserTask) prepareValidators(payload *Payload) error {
 	delegatedAmountMap := map[string]types.Amount{}
 
 	for _, validator := range payload.CurrentValidators {
-		validatorAmount := types.NewAmount(validator.StakeAmount)
+		validatorAmount := types.NewInt64Amount(0)
 
 		for _, d := range validator.Delegators {
 			amount := types.NewAmount(d.StakeAmount)
