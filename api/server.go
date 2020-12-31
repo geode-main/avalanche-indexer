@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -12,18 +13,25 @@ import (
 )
 
 type Server struct {
-	engine *gin.Engine
-	logger *logrus.Logger
-	db     *store.DB
-	rpc    *client.Client
+	annotations []routeAnnotation
+	engine      *gin.Engine
+	logger      *logrus.Logger
+	db          *store.DB
+	rpc         *client.Client
+}
+
+type routeAnnotation struct {
+	Path        string `json:"path"`
+	Description string `json:"description"`
 }
 
 func NewServer(db *store.DB, rpc *client.Client, logger *logrus.Logger) *Server {
 	srv := &Server{
-		engine: gin.New(),
-		db:     db,
-		logger: logger,
-		rpc:    rpc,
+		engine:      gin.New(),
+		annotations: []routeAnnotation{},
+		db:          db,
+		logger:      logger,
+		rpc:         rpc,
 	}
 
 	srv.setupMiddleware()
@@ -37,12 +45,17 @@ func (s *Server) Run(addr string) error {
 }
 
 func (s *Server) setupRoutes() {
-	s.engine.GET("/", s.handleIndex)
-	s.engine.GET("/health", s.handleHealth)
-	s.engine.GET("/status", s.handleStatus)
-	s.engine.GET("/network_stats", s.handleNetworkStats)
-	s.engine.GET("/validators", s.handleValidators)
-	s.engine.GET("/validators/:id", s.handleValidator)
+	s.addRoute(http.MethodGet, "/", "Index", s.handleIndex)
+	s.addRoute(http.MethodGet, "/health", "Get indexer health", s.handleHealth)
+	s.addRoute(http.MethodGet, "/status", "Get indexer status", s.handleStatus)
+	s.addRoute(http.MethodGet, "/network_stats", "Get network stats", s.handleNetworkStats)
+	s.addRoute(http.MethodGet, "/validators", "Get current validator set", s.handleValidators)
+	s.addRoute(http.MethodGet, "/validators/:id", "Get validator details", s.handleValidator)
+}
+
+func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
+	s.engine.Handle(method, path, handlers...)
+	s.annotations = append(s.annotations, routeAnnotation{path, description})
 }
 
 func (s *Server) setupMiddleware() {
@@ -52,12 +65,7 @@ func (s *Server) setupMiddleware() {
 
 func (s *Server) handleIndex(c *gin.Context) {
 	jsonOk(c, gin.H{
-		"endpoints": []string{
-			"/health",
-			"/status",
-			"/validators",
-			"/validators/:id",
-		},
+		"endpoints": s.annotations,
 	})
 }
 
