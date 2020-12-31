@@ -19,10 +19,11 @@ var ErrNotFound = gorm.ErrRecordNotFound
 type DB struct {
 	db *gorm.DB
 
-	Addresses  AddressesStore
-	Validators ValidatorsStore
-	Delegators DelegatorsStore
-	Networks   NetworksStore
+	Addresses   AddressesStore
+	Validators  ValidatorsStore
+	Delegators  DelegatorsStore
+	Networks    NetworksStore
+	Blockchains BlockchainsStore
 }
 
 func NewRaw(connStr string) (*gorm.DB, error) {
