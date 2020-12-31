@@ -32,7 +32,8 @@ func (s ValidatorsStore) FindByNodeID(id string) (*model.Validator, error) {
 
 	err := s.
 		Model(result).
-		First(result, "node_id = ?", id).
+		Where("node_id = ?", id).
+		Take(result).
 		Error
 
 	return result, checkErr(err)
@@ -133,7 +134,7 @@ func (s ValidatorsStore) GetStats(id string, bucket string, limit int) ([]model.
 	err := s.
 		Model(&model.ValidatorStat{}).
 		Where("node_id = ? AND bucket = ?", id, bucket).
-		Order("time ASC").
+		Order("time DESC").
 		Limit(limit).
 		Find(&result).
 		Error
