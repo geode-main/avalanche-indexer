@@ -10,6 +10,19 @@ type DelegatorsStore struct {
 	*gorm.DB
 }
 
+func (s DelegatorsStore) FindActive() ([]model.Delegation, error) {
+	result := []model.Delegation{}
+
+	err := s.
+		Model(&model.Delegation{}).
+		Where("active = ?", true).
+		Order("stake_amount DESC").
+		Find(&result).
+		Error
+
+	return result, checkErr(err)
+}
+
 func (s DelegatorsStore) FindByRewardAddress(address string) ([]model.Delegation, error) {
 	result := []model.Delegation{}
 

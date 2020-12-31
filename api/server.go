@@ -51,6 +51,7 @@ func (s *Server) setupRoutes() {
 	s.addRoute(http.MethodGet, "/network_stats", "Get network stats", s.handleNetworkStats)
 	s.addRoute(http.MethodGet, "/validators", "Get current validator set", s.handleValidators)
 	s.addRoute(http.MethodGet, "/validators/:id", "Get validator details", s.handleValidator)
+	s.addRoute(http.MethodGet, "/delegations", "Get active delegations", s.handleDelegations)
 }
 
 func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
@@ -182,4 +183,13 @@ func (s *Server) handleValidator(c *gin.Context) {
 		"stats_24h":   hourStats,
 		"stats_30d":   dayStats,
 	})
+}
+
+func (s *Server) handleDelegations(c *gin.Context) {
+	delegations, err := s.db.Delegators.FindActive()
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, delegations)
 }

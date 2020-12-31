@@ -8,7 +8,7 @@ import (
 
 type Delegation struct {
 	ID              int          `json:"-"`
-	ReferenceID     string       `json:"reference_id"`
+	ReferenceID     string       `json:"id"`
 	NodeID          string       `json:"node_id"`
 	StakeAmount     types.Amount `json:"stake_amount"`
 	PotentialReward types.Amount `json:"potential_reward"`
