@@ -52,6 +52,7 @@ func (s *Server) setupRoutes() {
 	s.addRoute(http.MethodGet, "/validators", "Get current validator set", s.handleValidators)
 	s.addRoute(http.MethodGet, "/validators/:id", "Get validator details", s.handleValidator)
 	s.addRoute(http.MethodGet, "/delegations", "Get active delegations", s.handleDelegations)
+	s.addRoute(http.MethodGet, "/address/:id", "Get address details", s.handleAddress)
 }
 
 func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
@@ -192,4 +193,25 @@ func (s *Server) handleDelegations(c *gin.Context) {
 	}
 
 	jsonOk(c, delegations)
+}
+
+func (s *Server) handleAddress(c *gin.Context) {
+	address := c.Param("id")
+
+	switch address[0] {
+	case 'P':
+		balance, err := s.rpc.Platform.GetBalance(address)
+		if shouldReturn(c, err) {
+			return
+		}
+		jsonOk(c, balance)
+	case 'X':
+		resp, err := s.rpc.Avm.GetAllBalances(address)
+		if shouldReturn(c, err) {
+			return
+		}
+		jsonOk(c, resp.Balances)
+	default:
+		jsonError(c, 400, "Invalid address")
+	}
 }
