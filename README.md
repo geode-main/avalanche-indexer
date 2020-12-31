@@ -107,8 +107,10 @@ avalanche-indexer -config path/to/config.json -cmd=server
 | GET    | /health                         | Healthcheck endpoint
 | GET    | /status                         | App version info and sync status
 | GET    | /network_stats                  | List of network stats for a time bucket
-| GET    | /validators                     | List of all active validators
+| GET    | /validators                     | List of active validators
 | GET    | /validators/:id                 | Validator details
+| GET    | /delegations                    | List of active delegations
+| GET    | /address/:id                    | Get address balance (X-chain/P-chain)
 
 ## License
 
