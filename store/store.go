@@ -14,6 +14,12 @@ import (
 	"github.com/figment-networks/avalanche-indexer/util"
 )
 
+const (
+	connMaxIdleTime = time.Hour
+	connMaxLifeTime = time.Hour * 2
+	connMaxNum      = 64
+)
+
 var ErrNotFound = gorm.ErrRecordNotFound
 
 type DB struct {
@@ -35,9 +41,25 @@ func NewRaw(connStr string) (*gorm.DB, error) {
 		},
 	)
 
-	return gorm.Open(postgres.Open(connStr), &gorm.Config{
+	conn, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
 		Logger: newLogger,
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	pool, err := conn.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	pool.SetConnMaxIdleTime(connMaxIdleTime)
+	pool.SetConnMaxLifetime(connMaxLifeTime)
+	pool.SetMaxOpenConns(connMaxNum)
+	pool.SetMaxIdleConns(connMaxNum)
+
+	return conn, err
 }
 
 func New(connStr string) (*DB, error) {
