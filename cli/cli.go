@@ -69,6 +69,8 @@ func Run() {
 		command = cmd.NewSyncCommand(log, db, rpc, config.Archiver)
 	case "worker":
 		command = cmd.NewWorkerCommand(db, rpc, log, config.GetSyncInterval(), config.GetPurgeInterval(), config.Archiver)
+	case "listener":
+		command = cmd.NewListenerCommand(db, rpc, log)
 	case "server":
 		command = cmd.NewServerCommand(db, config.ServerAddr, log, rpc)
 	case "migrate", "migrate:up", "migrate:down", "migrate:redo":
