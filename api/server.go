@@ -163,7 +163,7 @@ func (s *Server) handleValidator(c *gin.Context) {
 		return
 	}
 
-	delegations, err := s.db.Delegators.FindByNodeID(validator.NodeID)
+	delegations, err := s.db.Delegators.Search(store.DelegationsSearch{NodeID: validator.NodeID})
 	if shouldReturn(c, err) {
 		return
 	}
@@ -187,7 +187,14 @@ func (s *Server) handleValidator(c *gin.Context) {
 }
 
 func (s *Server) handleDelegations(c *gin.Context) {
-	delegations, err := s.db.Delegators.FindActive()
+	search := store.DelegationsSearch{}
+
+	if err := c.Bind(&search); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	delegations, err := s.db.Delegators.Search(search)
 	if shouldReturn(c, err) {
 		return
 	}
