@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"time"
 
 	"github.com/figment-networks/avalanche-indexer/model"
@@ -16,6 +17,16 @@ type ValidatorsSearch struct {
 	RewardAddress      string `form:"reward_address"`
 	CapacityPercentMin uint   `form:"capacity_percent_min"`
 	CapacityPercentMax uint   `form:"capacity_percent_max"`
+}
+
+func (s ValidatorsSearch) Validate() error {
+	if s.CapacityPercentMin > 100 {
+		return errors.New("capacity_percent_min must be below 100")
+	}
+	if s.CapacityPercentMax > 100 {
+		return errors.New("capacity_percent_max must be below 100")
+	}
+	return nil
 }
 
 func (s ValidatorsStore) LastHeight() (int64, error) {

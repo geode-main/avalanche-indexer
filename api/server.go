@@ -156,6 +156,10 @@ func (s *Server) handleValidators(c *gin.Context) {
 		badRequest(c, err)
 		return
 	}
+	if err := search.Validate(); err != nil {
+		badRequest(c, err)
+		return
+	}
 
 	validators, err := s.db.Validators.Search(search)
 	if shouldReturn(c, err) {
