@@ -1,0 +1,1 @@
+SELECT time FROM validator_sequences ORDER BY time DESC LIMIT 1
