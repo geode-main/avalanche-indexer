@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"time"
 
 	"github.com/figment-networks/avalanche-indexer/model"
@@ -10,6 +11,22 @@ import (
 
 type ValidatorsStore struct {
 	*gorm.DB
+}
+
+type ValidatorsSearch struct {
+	RewardAddress      string `form:"reward_address"`
+	CapacityPercentMin uint   `form:"capacity_percent_min"`
+	CapacityPercentMax uint   `form:"capacity_percent_max"`
+}
+
+func (s ValidatorsSearch) Validate() error {
+	if s.CapacityPercentMin > 100 {
+		return errors.New("capacity_percent_min must be below 100")
+	}
+	if s.CapacityPercentMax > 100 {
+		return errors.New("capacity_percent_max must be below 100")
+	}
+	return nil
 }
 
 func (s ValidatorsStore) LastHeight() (int64, error) {
@@ -39,14 +56,25 @@ func (s ValidatorsStore) FindByNodeID(id string) (*model.Validator, error) {
 	return result, checkErr(err)
 }
 
-func (s ValidatorsStore) FindAll() ([]model.Validator, error) {
+func (s ValidatorsStore) Search(search ValidatorsSearch) ([]model.Validator, error) {
 	result := []model.Validator{}
 
-	err := s.
+	scope := s.
 		Model(&model.Validator{}).
 		Order("stake_amount").
-		Find(&result, "active = ?", true).
-		Error
+		Where("active = ?", true)
+
+	if search.RewardAddress != "" {
+		scope = scope.Where("reward_address = ?", search.RewardAddress)
+	}
+	if search.CapacityPercentMin > 0 {
+		scope = scope.Where("capacity_percent >= ?", search.CapacityPercentMin-1)
+	}
+	if search.CapacityPercentMax > 0 {
+		scope = scope.Where("capacity_percent <= ?", search.CapacityPercentMax)
+	}
+
+	err := scope.Find(&result).Error
 
 	return result, checkErr(err)
 }
