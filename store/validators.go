@@ -44,6 +44,21 @@ func (s ValidatorsStore) LastHeight() (int64, error) {
 	return result, rows.Scan(&result)
 }
 
+func (s ValidatorsStore) LastTime() (*time.Time, error) {
+	rows, err := s.DB.Raw(queries.ValidatorSeqLastTime).Rows()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return nil, nil
+	}
+
+	var result time.Time
+	return &result, rows.Scan(&result)
+}
+
 func (s ValidatorsStore) FindByNodeID(id string) (*model.Validator, error) {
 	result := &model.Validator{}
 

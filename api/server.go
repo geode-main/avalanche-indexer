@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -96,6 +97,20 @@ func (s *Server) handleStatus(c *gin.Context) {
 		"app_version": indexer.AppVersion,
 		"git_commit":  indexer.GitCommit,
 		"go_version":  indexer.GoVersion,
+		"sync_status": "stale",
+	}
+
+	lastTime, err := s.db.Validators.LastTime()
+	if err != nil {
+		s.logger.WithError(err).Error("cant fetch last validator time")
+	}
+	if lastTime != nil {
+		data["sync_time"] = lastTime
+		if time.Since(*lastTime) < time.Minute*5 {
+			data["sync_status"] = "current"
+		}
+	} else {
+		data["sync_status"] = "error"
 	}
 
 	nodeVersion, err := s.rpc.Info.NodeVersion()
