@@ -18,8 +18,8 @@ type Delegation struct {
 	ActiveEndTime   time.Time    `json:"active_end_time"`
 	FirstHeight     int64        `json:"first_height"`
 	LastHeight      int64        `json:"last_height"`
-	CreatedAt       time.Time    `json:"-"`
-	UpdatedAt       time.Time    `json:"-"`
+	CreatedAt       time.Time    `json:"created_at"`
+	UpdatedAt       time.Time    `json:"updated_at"`
 }
 
 func (Delegation) TableName() string {
