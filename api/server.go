@@ -150,7 +150,14 @@ func (s *Server) handleNetworkStats(c *gin.Context) {
 }
 
 func (s *Server) handleValidators(c *gin.Context) {
-	validators, err := s.db.Validators.FindAll()
+	search := store.ValidatorsSearch{}
+
+	if err := c.Bind(&search); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	validators, err := s.db.Validators.Search(search)
 	if shouldReturn(c, err) {
 		return
 	}
