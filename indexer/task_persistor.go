@@ -98,7 +98,7 @@ func (t PersistorTask) createValidators(payload *Payload) error {
 
 func (t PersistorTask) createDelegations(payload *Payload) error {
 	t.logger.Debug("creating delegations")
-	return t.db.Delegators.Import(payload.Delegations)
+	return t.db.Delegators.Import(payload.Delegations, store.DelegationsBatchSize)
 }
 
 func (t PersistorTask) createNetworkRecords(payload *Payload) error {
