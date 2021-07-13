@@ -5,6 +5,7 @@ log/*
 dist/*
 Procfile
 .env*
+.scripts
 avalanche-indexer
 store/migrations/migrations.go
 store/queries/queries.go
