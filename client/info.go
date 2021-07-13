@@ -4,6 +4,17 @@ type InfoClient struct {
 	rpc
 }
 
+type infoNodeVersionResponse struct {
+	Version         string `json:"version"`
+	DatabaseVersion string `json:"databaseVersion"`
+	GitCommit       string `json:"gitCommit"`
+	VmVersions      struct {
+		AVM      string `json:"avm"`
+		EVM      string `json:"evm"`
+		Platform string `json:"platform"`
+	} `json:"vmVersions"`
+}
+
 type infoPeersResponse struct {
 	Peers []Peer `json:"peers"`
 }
@@ -39,11 +50,11 @@ func (c InfoClient) NodeID() (string, error) {
 }
 
 func (c InfoClient) NodeVersion() (string, error) {
-	resp := map[string]string{}
+	resp := infoNodeVersionResponse{}
 	if err := c.call("info.getNodeVersion", nil, &resp); err != nil {
 		return "", err
 	}
-	return resp["version"], nil
+	return resp.Version, nil
 }
 
 func (c InfoClient) Peers() ([]Peer, error) {
