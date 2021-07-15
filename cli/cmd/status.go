@@ -6,19 +6,19 @@ import (
 	"github.com/figment-networks/avalanche-indexer/client"
 )
 
-type Status struct {
+type StatusCommand struct {
 	rpc    *client.Client
 	logger *logrus.Logger
 }
 
-func NewStatusCommand(rpc *client.Client, logger *logrus.Logger) Status {
-	return Status{
+func NewStatusCommand(rpc *client.Client, logger *logrus.Logger) StatusCommand {
+	return StatusCommand{
 		rpc:    rpc,
 		logger: logger,
 	}
 }
 
-func (cmd Status) Run() error {
+func (cmd StatusCommand) Run() error {
 	version, err := cmd.rpc.Info.NodeVersion()
 	if err != nil {
 		cmd.logger.WithError(err).Error("cant fetch node version")

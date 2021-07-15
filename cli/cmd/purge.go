@@ -7,19 +7,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Purge struct {
+type PurgeCommand struct {
 	db     *store.DB
 	logger *logrus.Logger
 }
 
-func NewPurgeCommand(db *store.DB, logger *logrus.Logger) Purge {
-	return Purge{
+func NewPurgeCommand(db *store.DB, logger *logrus.Logger) PurgeCommand {
+	return PurgeCommand{
 		db:     db,
 		logger: logger,
 	}
 }
 
-func (cmd Purge) Run() error {
+func (cmd PurgeCommand) Run() error {
 	return runPurge(cmd.db, cmd.logger)
 }
 

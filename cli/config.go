@@ -3,28 +3,26 @@ package cli
 import (
 	"encoding/json"
 	"errors"
-	"net/url"
 	"os"
 	"time"
 )
 
 type Config struct {
-	Environment string `json:"env"`
-	DatabaseURL string `json:"database_url"`
-	RPCEndpoint string `json:"rpc_endpoint"`
-	ServerAddr  string `json:"server_addr"`
-	LogLevel    string `json:"log_level"`
-	LogSQL      bool   `json:"log_sql"`
-
-	SyncEnabled  bool   `json:"sync_enabled"`
-	SyncInterval string `json:"sync_interval"`
-
+	Environment   string `json:"env"`
+	NetworkID     uint32 `json:"network_id"`
+	EvmNetworkID  uint32 `json:"eth_network_id"`
+	EvmChainID    uint32 `json:"evm_chain_id"`
+	AvaxAssetID   string `json:"avax_asset_id"`
+	DatabaseURL   string `json:"database_url"`
+	RPCEndpoint   string `json:"rpc_endpoint"`
+	ServerAddr    string `json:"server_addr"`
+	LogLevel      string `json:"log_level"`
+	LogSQL        bool   `json:"log_sql"`
+	SyncEnabled   bool   `json:"sync_enabled"`
+	SyncInterval  string `json:"sync_interval"`
 	PurgeEnabled  bool   `json:"purge_enabled"`
 	PurgeInterval string `json:"purge_interval"`
 	PurgePeriod   string `json:"purge_period"`
-
-	Archiver        string `json:"archiver"`
-	ArchiverEnabled bool   `json:"archiver_enabled"`
 
 	syncInterval  time.Duration
 	purgeInterval time.Duration
@@ -58,6 +56,13 @@ func (c *Config) Validate() error {
 		return errors.New("purge interval is required")
 	}
 
+	if c.NetworkID == 0 {
+		return errors.New("network id is required")
+	}
+	if c.EvmChainID == 0 {
+		return errors.New("evm chain id is required")
+	}
+
 	dur, err := time.ParseDuration(c.SyncInterval)
 	if err != nil {
 		return err
@@ -69,17 +74,6 @@ func (c *Config) Validate() error {
 		return err
 	}
 	c.purgeInterval = purgeDur
-
-	if c.Archiver != "" {
-		uri, err := url.Parse(c.Archiver)
-		if err != nil {
-			return errors.New("invalida archiver configuration")
-		}
-
-		if !(uri.Scheme == "dir" || uri.Scheme == "s3") {
-			return errors.New("unsupported archiver type")
-		}
-	}
 
 	return nil
 }

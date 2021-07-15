@@ -25,3 +25,7 @@ func (s *indexSource) Err() error {
 func (s *indexSource) Len() int64 {
 	return 0
 }
+
+func (s *indexSource) Skip(stageName pipeline.StageName) bool {
+	return false
+}

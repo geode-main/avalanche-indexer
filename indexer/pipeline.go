@@ -16,14 +16,13 @@ type indexingPipeline struct {
 	pipeline pipeline.CustomPipeline
 }
 
-func NewPipeline(db *store.DB, rpc *client.Client, logger *logrus.Logger, archiverConfig string) (*indexingPipeline, error) {
+func NewPipeline(db *store.DB, rpc *client.Client, logger *logrus.Logger) (*indexingPipeline, error) {
 	p := pipeline.NewCustom(NewPayloadFactory())
 	p.SetLogger(NewLogger(logger))
 
 	fetcherStage := pipeline.NewStageWithTasks(
 		pipeline.StageFetcher,
-		NewFetcherTask(rpc, logger),                 // fetch data from the network
-		NewArchiverTask(archiverConfig, db, logger), // dump client responses to the disk
+		NewFetcherTask(rpc, logger), // fetch data from the network
 	)
 
 	parserStage := pipeline.NewStageWithTasks(

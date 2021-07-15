@@ -10,6 +10,7 @@ import (
 
 	"github.com/figment-networks/avalanche-indexer/client"
 	"github.com/figment-networks/avalanche-indexer/indexer"
+	"github.com/figment-networks/avalanche-indexer/model"
 	"github.com/figment-networks/avalanche-indexer/store"
 )
 
@@ -54,6 +55,17 @@ func (s *Server) setupRoutes() {
 	s.addRoute(http.MethodGet, "/validators/:id", "Get validator details", s.handleValidator)
 	s.addRoute(http.MethodGet, "/delegations", "Get active delegations", s.handleDelegations)
 	s.addRoute(http.MethodGet, "/address/:id", "Get address details", s.handleAddress)
+	s.addRoute(http.MethodGet, "/chains", "Get all blockchains", s.handleBlockchains)
+	s.addRoute(http.MethodGet, "/chain_sync_statuses", "Get indexer sync status", s.handleSyncStatus)
+	s.addRoute(http.MethodGet, "/assets", "Get all assets", s.handleAssets)
+	s.addRoute(http.MethodGet, "/assets/:id", "Get asset details", s.handleAsset)
+	s.addRoute(http.MethodGet, "/blocks", "Get blocks", s.handleBlocks)
+	s.addRoute(http.MethodGet, "/blocks/:id", "Get block", s.handleBlock)
+	s.addRoute(http.MethodGet, "/transactions", "Transactions search", s.handleTransactions)
+	s.addRoute(http.MethodPost, "/transactions", "Transactions search", s.handleTransactions)
+	s.addRoute(http.MethodGet, "/transactions/:id", "Get transaction details", s.handleTransaction)
+	s.addRoute(http.MethodGet, "/transaction_outputs/:id", "Get transaction output", s.handleTransactionOutput)
+	s.addRoute(http.MethodGet, "/transaction_types", "Get transaction types", s.handleTransactionTypeCounts)
 }
 
 func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
@@ -66,12 +78,7 @@ func (s *Server) setupMiddleware() {
 	s.engine.Use(requestLogger(s.logger))
 }
 
-func (s *Server) handleIndex(c *gin.Context) {
-	jsonOk(c, gin.H{
-		"endpoints": s.annotations,
-	})
-}
-
+// check performs indexer healthcheck
 func (s *Server) check() error {
 	if err := s.db.Test(); err != nil {
 		return err
@@ -82,6 +89,12 @@ func (s *Server) check() error {
 	return nil
 }
 
+// handleIndex returns all available endpoints
+func (s *Server) handleIndex(c *gin.Context) {
+	jsonOk(c, gin.H{"endpoints": s.annotations})
+}
+
+// handleHealth returns the indexer health
 func (s *Server) handleHealth(c *gin.Context) {
 	if err := s.check(); err != nil {
 		jsonError(c, 400, err)
@@ -91,13 +104,14 @@ func (s *Server) handleHealth(c *gin.Context) {
 	jsonOk(c, gin.H{"healthy": true})
 }
 
+// handleStatus returns the indexer status
 func (s *Server) handleStatus(c *gin.Context) {
-	data := gin.H{
-		"app_name":    indexer.AppName,
-		"app_version": indexer.AppVersion,
-		"git_commit":  indexer.GitCommit,
-		"go_version":  indexer.GoVersion,
-		"sync_status": "stale",
+	resp := StatusResponse{
+		AppName:    indexer.AppName,
+		AppVersion: indexer.AppVersion,
+		GitCommit:  indexer.GitCommit,
+		GoVersion:  indexer.GoVersion,
+		SyncStatus: "stale",
 	}
 
 	lastTime, err := s.db.Validators.LastTime()
@@ -105,33 +119,44 @@ func (s *Server) handleStatus(c *gin.Context) {
 		s.logger.WithError(err).Error("cant fetch last validator time")
 	}
 	if lastTime != nil {
-		data["sync_time"] = lastTime
+		resp.SyncTime = lastTime
 		if time.Since(*lastTime) < time.Minute*5 {
-			data["sync_status"] = "current"
+			resp.SyncStatus = "current"
 		}
 	} else {
-		data["sync_status"] = "error"
+		resp.SyncStatus = "error"
 	}
 
 	nodeVersion, err := s.rpc.Info.NodeVersion()
 	if err == nil {
-		data["node_version"] = nodeVersion
+		resp.NodeVersion = nodeVersion
 	} else {
-		data["node_version"] = "-"
+		resp.NodeVersion = "-"
 		s.logger.WithError(err).Error("cant fetch node version")
 	}
 
 	networkName, err := s.rpc.Info.NetworkName()
 	if err == nil {
-		data["network_name"] = networkName
+		resp.NetworkName = networkName
 	} else {
-		data["network_name"] = "-"
+		resp.NetworkName = "-"
 		s.logger.WithError(err).Error("cant fetch network name")
 	}
 
-	jsonOk(c, data)
+	jsonOk(c, resp)
 }
 
+// handleSyncStatus returns chain sync status information
+func (s *Server) handleSyncStatus(c *gin.Context) {
+	result, err := s.db.Platform.GetSyncStatuses()
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, result)
+}
+
+// handleNetworkStats returns network stats for a given time bucket
 func (s *Server) handleNetworkStats(c *gin.Context) {
 	bucket := c.Query("bucket")
 	if bucket == "" {
@@ -164,6 +189,7 @@ func (s *Server) handleNetworkStats(c *gin.Context) {
 	jsonOk(c, stats)
 }
 
+// handleValidators returns validators records
 func (s *Server) handleValidators(c *gin.Context) {
 	search := store.ValidatorsSearch{}
 
@@ -180,9 +206,11 @@ func (s *Server) handleValidators(c *gin.Context) {
 	if shouldReturn(c, err) {
 		return
 	}
+
 	jsonOk(c, validators)
 }
 
+// handleValidator returns validator details
 func (s *Server) handleValidator(c *gin.Context) {
 	validator, err := s.db.Validators.FindByNodeID(c.Param("id"))
 	if shouldReturn(c, err) {
@@ -204,14 +232,15 @@ func (s *Server) handleValidator(c *gin.Context) {
 		return
 	}
 
-	jsonOk(c, gin.H{
-		"validator":   validator,
-		"delegations": delegations,
-		"stats_24h":   hourStats,
-		"stats_30d":   dayStats,
+	jsonOk(c, ValidatorResponse{
+		Validator:   validator,
+		Delegations: delegations,
+		HourlyStats: hourStats,
+		DailyStats:  dayStats,
 	})
 }
 
+// handleDelegations renders all available delegations
 func (s *Server) handleDelegations(c *gin.Context) {
 	search := store.DelegationsSearch{}
 
@@ -228,6 +257,7 @@ func (s *Server) handleDelegations(c *gin.Context) {
 	jsonOk(c, delegations)
 }
 
+// handleAddress returns account balance on a given chain
 func (s *Server) handleAddress(c *gin.Context) {
 	address := c.Param("id")
 
@@ -247,4 +277,121 @@ func (s *Server) handleAddress(c *gin.Context) {
 	default:
 		jsonError(c, 400, "Invalid address")
 	}
+}
+
+// handleTransactions performs transactions search
+func (s *Server) handleTransactions(c *gin.Context) {
+	input := store.TxSearchInput{}
+	if err := c.Bind(&input); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	output, err := s.db.Transactions.Search(input)
+	if err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	jsonOk(c, output.Transactions)
+}
+
+// handleTransaction loads and renders a single transaction details
+func (s *Server) handleTransaction(c *gin.Context) {
+	tx, err := s.db.Transactions.GetByID(c.Param("id"))
+	if shouldReturn(c, err) {
+		return
+	}
+	jsonOk(c, tx)
+}
+
+// handleTransactionTypeCounts returns all available transaction typed and associated counts
+func (s *Server) handleTransactionTypeCounts(c *gin.Context) {
+	result, err := s.db.Transactions.GetTypeCounts(c.Query("chain"))
+	if shouldReturn(c, err) {
+		return
+	}
+	jsonOk(c, result)
+}
+
+// handleTransactionOutput returns a single transaction output record
+func (s *Server) handleTransactionOutput(c *gin.Context) {
+	result, err := s.db.Platform.GetTransactionOutput(c.Param("id"))
+	if shouldReturn(c, err) {
+		return
+	}
+	jsonOk(c, result)
+}
+
+// handleBlockchains renders all available blockchains
+func (s *Server) handleBlockchains(c *gin.Context) {
+	chains, err := s.db.Platform.Chains()
+	if shouldReturn(c, err) {
+		return
+	}
+	jsonOk(c, chains)
+}
+
+// handleBlockchains renders all available blockchains
+func (s *Server) handleAssets(c *gin.Context) {
+	var (
+		assets []model.Asset
+		err    error
+	)
+
+	if assetType := c.Query("type"); assetType != "" {
+		assets, err = s.db.Assets.GetByType(assetType)
+	} else {
+		assets, err = s.db.Assets.GetAll()
+	}
+
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, assets)
+}
+
+// handleAsset renders asset details
+func (s *Server) handleAsset(c *gin.Context) {
+	asset, err := s.db.Assets.Get(c.Param("id"))
+	if shouldReturn(c, err) {
+		return
+	}
+
+	count, err := s.db.Assets.GetTransactionsCount(asset.AssetID)
+	if err != nil {
+		s.logger.WithError(err).Error("cant fetch transactions count for asset")
+	}
+	if count != nil {
+		asset.TransactionsCount = count
+	}
+
+	jsonOk(c, asset)
+}
+
+// handleBlocks renders blocks matching the search parameters
+func (s Server) handleBlocks(c *gin.Context) {
+	input := &store.BlocksSearch{}
+	if err := c.Bind(input); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	blocks, err := s.db.Platform.GetBlocks(input)
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, blocks)
+}
+
+// handleBlock renders a single block details
+func (s Server) handleBlock(c *gin.Context) {
+	block, err := s.db.Platform.GetBlock(c.Param("id"))
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, block)
 }

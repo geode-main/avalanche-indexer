@@ -1,0 +1,1 @@
+SELECT COUNT(1) FROM transaction_outputs WHERE asset = ?

@@ -1,5 +1,7 @@
 package client
 
+import "time"
+
 type Peer struct {
 	ID           string `json:"nodeID"`
 	IP           string `json:"ip"`
@@ -81,4 +83,31 @@ type Balance struct {
 	Unlocked           string `json:"unlocked"`
 	LockedStakeable    string `json:"lockedStakeable"`
 	LockedNotStakeable string `json:"lockedNotStakeable"`
+}
+
+type RewardUTXOsResponse struct {
+	NumFetched string   `json:"numFetched"`
+	Encoding   string   `json:"encoding"`
+	UTXOs      []string `json:"utxos"`
+}
+
+type Container struct {
+	ID        string    `json:"id"`
+	Index     string    `json:"index"`
+	Bytes     string    `json:"bytes"`
+	Encoding  string    `json:"encoding"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
+type ContainersResponse struct {
+	Containers []Container `json:"containers"`
+}
+
+type AvmBalance struct {
+	Asset   string `json:"asset"`
+	Balance string `json:"balance"`
+}
+
+type GetAllBalancesResponse struct {
+	Balances []AvmBalance `json:"balances"`
 }

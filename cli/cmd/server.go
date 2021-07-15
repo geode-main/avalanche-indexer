@@ -7,15 +7,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Server struct {
+type ServerCommand struct {
 	db     *store.DB
 	addr   string
 	logger *logrus.Logger
 	rpc    *client.Client
 }
 
-func NewServerCommand(db *store.DB, addr string, logger *logrus.Logger, rpc *client.Client) Server {
-	return Server{
+func NewServerCommand(db *store.DB, addr string, logger *logrus.Logger, rpc *client.Client) ServerCommand {
+	return ServerCommand{
 		db:     db,
 		addr:   addr,
 		logger: logger,
@@ -23,7 +23,7 @@ func NewServerCommand(db *store.DB, addr string, logger *logrus.Logger, rpc *cli
 	}
 }
 
-func (cmd Server) Run() error {
+func (cmd ServerCommand) Run() error {
 	cmd.logger.Info("starting http server on ", cmd.addr)
 
 	server := api.NewServer(cmd.db, cmd.rpc, cmd.logger)

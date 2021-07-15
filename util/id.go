@@ -4,6 +4,9 @@ import (
 	"crypto/sha1"
 	"fmt"
 
+	"github.com/ava-labs/avalanchego/ids"
+	"github.com/ava-labs/avalanchego/utils/hashing"
+
 	"github.com/tuvistavie/securerandom"
 )
 
@@ -28,4 +31,16 @@ func StringSHA1(input string) string {
 	h.Write([]byte(input))
 
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func AvalancheHash256(data []byte) []byte {
+	return hashing.ComputeHash256(data)
+}
+
+func AvalancheID(data []byte) (string, error) {
+	id, err := ids.ToID(AvalancheHash256(data))
+	if err != nil {
+		return "", err
+	}
+	return id.String(), nil
 }

@@ -13,21 +13,21 @@ import (
 	"github.com/figment-networks/avalanche-indexer/store/migrations"
 )
 
-type Migrate struct {
+type MigrateCommand struct {
 	connStr string
 	command string
 	logger  *logrus.Logger
 }
 
-func NewMigrateCommand(command string, connStr string, logger *logrus.Logger) Migrate {
-	return Migrate{
+func NewMigrateCommand(command string, connStr string, logger *logrus.Logger) MigrateCommand {
+	return MigrateCommand{
 		command: command,
 		connStr: connStr,
 		logger:  logger,
 	}
 }
 
-func (cmd Migrate) Run() error {
+func (cmd MigrateCommand) Run() error {
 	cmd.logger.Info("starting migration")
 	defer cmd.logger.Info("finished migration")
 
