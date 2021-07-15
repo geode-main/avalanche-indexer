@@ -15,11 +15,11 @@ build: migrations queries
 
 # Generate static migrations file
 migrations:
-	go-assets-builder store/migrations -p migrations -o store/migrations/migrations.go
+	@go-assets-builder store/migrations -p migrations -o store/migrations/migrations.go
 
 queries:
-	sqlembed -path=./store/queries -package=queries > ./store/queries/queries.go
-	go fmt ./store/queries/queries.go
+	@sqlembed -path=./store/queries -package=queries > ./store/queries/queries.go
+	@go fmt ./store/queries/queries.go
 
 # Install third-party tools
 setup:

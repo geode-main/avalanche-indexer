@@ -4,7 +4,7 @@ import "fmt"
 
 var (
 	AppName    = "avalanche-indexer"
-	AppVersion = "0.2.3"
+	AppVersion = "0.2.2"
 	GitCommit  = "-"
 	GoVersion  = "-"
 )

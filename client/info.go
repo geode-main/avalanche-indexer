@@ -1,5 +1,7 @@
 package client
 
+import "strconv"
+
 type InfoClient struct {
 	rpc
 }
@@ -20,29 +22,36 @@ type infoPeersResponse struct {
 }
 
 func (c InfoClient) BlockchainID(alias string) (string, error) {
-	data, err := c.callRaw("info.getBlockchainID", map[string]string{"alias": alias})
+	resp := map[string]string{}
+
+	err := c.call("info.getBlockchainID", map[string]string{"alias": alias}, &resp)
 	if err != nil {
 		return "", err
 	}
-	return string(data), nil
+
+	return resp["blockchainID"], nil
 }
 
-func (c InfoClient) NetworkID() (string, error) {
-	data, err := c.callRaw("info.getNetworkID", nil)
+func (c InfoClient) NetworkID() (int, error) {
+	resp := map[string]string{}
+
+	err := c.call("info.getNetworkID", nil, &resp)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	return string(data), nil
+
+	return strconv.Atoi(resp["networkID"])
 }
 
 func (c InfoClient) NetworkName() (string, error) {
 	resp := map[string]string{}
 	err := c.call("info.getNetworkName", nil, &resp)
+
 	return resp["networkName"], err
 }
 
 func (c InfoClient) NodeID() (string, error) {
-	data, err := c.callRaw("info.getNodeID", nil)
+	data, err := c.callRaw(c.endpoint, "info.getNodeID", nil)
 	if err != nil {
 		return "", err
 	}
@@ -51,6 +60,7 @@ func (c InfoClient) NodeID() (string, error) {
 
 func (c InfoClient) NodeVersion() (string, error) {
 	resp := infoNodeVersionResponse{}
+
 	if err := c.call("info.getNodeVersion", nil, &resp); err != nil {
 		return "", err
 	}

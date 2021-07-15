@@ -9,6 +9,7 @@ import (
 	"github.com/figment-networks/avalanche-indexer/cli/cmd"
 	"github.com/figment-networks/avalanche-indexer/client"
 	"github.com/figment-networks/avalanche-indexer/indexer"
+	"github.com/figment-networks/avalanche-indexer/indexer/shared"
 	"github.com/figment-networks/avalanche-indexer/store"
 )
 
@@ -62,13 +63,15 @@ func Run() {
 	rpc := client.New(config.RPCEndpoint)
 	var command cliCommand
 
+	shared.SetBech32HRP(config.NetworkID)
+
 	switch cliOpts.command {
 	case "status":
 		command = cmd.NewStatusCommand(rpc, log)
 	case "sync":
-		command = cmd.NewSyncCommand(log, db, rpc, config.Archiver)
+		command = cmd.NewSyncCommand(log, db, rpc, config.NetworkID, config.EvmChainID)
 	case "worker":
-		command = cmd.NewWorkerCommand(db, rpc, log, config.GetSyncInterval(), config.GetPurgeInterval(), config.Archiver)
+		command = cmd.NewWorkerCommand(db, rpc, log, config.GetSyncInterval(), config.GetPurgeInterval(), config.NetworkID, config.EvmChainID)
 	case "server":
 		command = cmd.NewServerCommand(db, config.ServerAddr, log, rpc)
 	case "migrate", "migrate:up", "migrate:down", "migrate:redo":

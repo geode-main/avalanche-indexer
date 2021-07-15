@@ -13,22 +13,6 @@ type ValidatorsStore struct {
 	*gorm.DB
 }
 
-type ValidatorsSearch struct {
-	RewardAddress      string `form:"reward_address"`
-	CapacityPercentMin uint   `form:"capacity_percent_min"`
-	CapacityPercentMax uint   `form:"capacity_percent_max"`
-}
-
-func (s ValidatorsSearch) Validate() error {
-	if s.CapacityPercentMin > 100 {
-		return errors.New("capacity_percent_min must be below 100")
-	}
-	if s.CapacityPercentMax > 100 {
-		return errors.New("capacity_percent_max must be below 100")
-	}
-	return nil
-}
-
 func (s ValidatorsStore) LastHeight() (int64, error) {
 	rows, err := s.DB.Raw(queries.ValidatorLastHeight).Rows()
 	if err != nil {
@@ -183,4 +167,20 @@ func (s ValidatorsStore) GetStats(id string, bucket string, limit int) ([]model.
 		Error
 
 	return result, checkErr(err)
+}
+
+type ValidatorsSearch struct {
+	RewardAddress      string `form:"reward_address"`
+	CapacityPercentMin uint   `form:"capacity_percent_min"`
+	CapacityPercentMax uint   `form:"capacity_percent_max"`
+}
+
+func (s ValidatorsSearch) Validate() error {
+	if s.CapacityPercentMin > 100 {
+		return errors.New("capacity_percent_min must be below 100")
+	}
+	if s.CapacityPercentMax > 100 {
+		return errors.New("capacity_percent_max must be below 100")
+	}
+	return nil
 }

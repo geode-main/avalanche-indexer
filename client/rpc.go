@@ -17,6 +17,7 @@ const (
 	prefixAvm      = "/ext/bc/X"
 	prefixEvm      = "/ext/bc/C/rpc"
 	prefixIpc      = "/ext/ipcs"
+	prefixIndex    = "/ext/index"
 )
 
 type rpc struct {
@@ -29,19 +30,19 @@ func initRPC(endpoint string, prefix string) rpc {
 	return rpc{
 		endpoint: fmt.Sprintf("%s%s", endpoint, prefix),
 		client: &http.Client{
-			Timeout: time.Second * 5,
+			Timeout: time.Second * 30,
 		},
 	}
 }
 
-func (c rpc) callRaw(method string, args interface{}) ([]byte, error) {
+func (c rpc) callRaw(url string, method string, args interface{}) ([]byte, error) {
 	data, err := json2.EncodeClientRequest(method, args)
 	if err != nil {
 		return nil, err
 	}
 	reqBody := bytes.NewReader(data)
 
-	req, err := http.NewRequest(http.MethodPost, c.endpoint, reqBody)
+	req, err := http.NewRequest(http.MethodPost, url, reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -61,10 +62,14 @@ func (c rpc) callRaw(method string, args interface{}) ([]byte, error) {
 }
 
 func (c rpc) call(method string, args interface{}, out interface{}) error {
-	data, err := c.callRaw(method, args)
+	data, err := c.callRaw(c.endpoint, method, args)
 	if err != nil {
 		return err
 	}
+	return c.decode(data, out)
+}
+
+func (c rpc) decode(data []byte, out interface{}) error {
 	return json2.DecodeClientResponse(bytes.NewReader(data), out)
 }
 

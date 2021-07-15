@@ -1,6 +1,8 @@
 package client
 
-import "github.com/figment-networks/avalanche-indexer/util"
+import (
+	"github.com/figment-networks/avalanche-indexer/util"
+)
 
 // PlatformClient talks to the P chain
 type PlatformClient struct {
@@ -39,4 +41,12 @@ func (c PlatformClient) GetCurrentHeight() (int64, error) {
 		return 0, err
 	}
 	return util.ParseInt64(result["height"])
+}
+
+func (c PlatformClient) GetRewardUTXOs(id string) (resp *RewardUTXOsResponse, err error) {
+	err = c.call("platform.getRewardUTXOs", map[string]string{
+		"txID":     id,
+		"encoding": "hex",
+	}, &resp)
+	return resp, err
 }

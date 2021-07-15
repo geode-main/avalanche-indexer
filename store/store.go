@@ -25,18 +25,27 @@ var ErrNotFound = gorm.ErrRecordNotFound
 type DB struct {
 	db *gorm.DB
 
-	Addresses  AddressesStore
-	Validators ValidatorsStore
-	Delegators DelegatorsStore
-	Networks   NetworksStore
+	Addresses    AddressesStore
+	Validators   ValidatorsStore
+	Delegators   DelegatorsStore
+	Networks     NetworksStore
+	Platform     PlatformStore
+	RawMessages  RawMessagesStore
+	Transactions TransactionsStore
+	Assets       AssetsStore
 }
 
 func NewRaw(connStr string) (*gorm.DB, error) {
+	level := logger.Warn
+	if os.Getenv("SQL_DEBUG") == "1" {
+		level = logger.Info
+	}
+
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
-			SlowThreshold: time.Second * 5,
-			LogLevel:      logger.Warn,
+			SlowThreshold: time.Second * 5000,
+			LogLevel:      level,
 			Colorful:      true,
 		},
 	)
@@ -71,10 +80,14 @@ func New(connStr string) (*DB, error) {
 	return &DB{
 		db: conn,
 
-		Addresses:  AddressesStore{conn},
-		Validators: ValidatorsStore{conn},
-		Delegators: DelegatorsStore{conn},
-		Networks:   NetworksStore{conn},
+		Addresses:    AddressesStore{conn},
+		Validators:   ValidatorsStore{conn},
+		Delegators:   DelegatorsStore{conn},
+		Networks:     NetworksStore{conn},
+		Platform:     NewPlatformStore(conn),
+		RawMessages:  RawMessagesStore{conn},
+		Transactions: TransactionsStore{conn},
+		Assets:       AssetsStore{conn},
 	}, nil
 }
 
