@@ -1,21 +1,49 @@
 # Avalanche Indexer
 
-Data indexer and API service for Avalanche Network
-
-*Project is under active development*
+Blockchain data indexer and API for Avalanche network.
 
 ## Requirements
 
-- PostgreSQL 10.x+
-- Go 1.14+
+- PostgreSQL 12.x+
+- Go 1.16+
+- Access to Avalanchego full node
 
 ## Installation
 
 Please see the sections below for all available methods of installation.
 
+### Build from Source
+
+Clone the repository:
+
+```bash
+git@github.com:figment-networks/avalanche-indexer.git
+cd avalanche-indexer
+```
+
+Install dependencies:
+
+```bash
+make setup
+```
+
+Build the binary:
+
+```bash
+make
+```
+
 ### Binary Releases
 
 See [Github Releases](https://github.com/figment-networks/avalanche-indexer/releases) page for details.
+
+### Docker
+
+Build the docker image with:
+
+```
+make docker-build
+```
 
 ## Usage
 
@@ -57,13 +85,14 @@ Example:
 ```json
 {
   "database_url": "postgres://localhost/avalanche-indexer",
-  "log_level": "debug",
+  "log_level": "info",
   "rpc_endpoint": "http://localhost:9650",
-  "sync_interval": "30s",
-  "purge_interval": "60s",
+  "sync_interval": "60s",
+  "purge_interval": "5m",
   "server_addr": "localhost:8080",
-  "archiver": "s3://us-east-1/bucketname",
-  "archiver_enabled": true
+  "network_id": 1,
+  "evm_network_id": 1,
+  "evm_chain_id": 43114
 }
 ```
 
@@ -111,6 +140,17 @@ avalanche-indexer -config path/to/config.json -cmd=server
 | GET    | /validators/:id                 | Validator details
 | GET    | /delegations                    | List of active delegations
 | GET    | /address/:id                    | Get address balance (X-chain/P-chain)
+| GET    | /assets                         | Get all available assets
+| GET    | /assets/:id                     | Get asset details by ID
+| GET    | /chains                         | List of existing chains
+| GET    | /chain_sync_statuses            | Get primary chain (X/P/C) sync statuses
+| GET    | /blocks                         | Get blocks by chain
+| GET    | /blocks/:hash                   | Get block by hash (P/C)
+| GET    | /transactions                   | Transactions search
+| POST   | /transactions                   | Alternative transaction search endpoint
+| GET    | /transactions/:hash             | Get transaction details by hash
+| GET    | /transaction_outputs/:id        | Get a transaction output details by ID
+| GET    | /transaction_types              | Get a summary of all transcation types
 
 ## License
 

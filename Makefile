@@ -41,6 +41,7 @@ docker:
 # Build a public docker image
 docker-build:
 	docker build \
+		--build-arg GIT_COMMIT=${GIT_COMMIT} \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
 		-f Dockerfile \
 		.
