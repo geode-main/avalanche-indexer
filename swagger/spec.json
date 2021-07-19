@@ -20,9 +20,7 @@
       "get": {
         "summary": "Service Index ",
         "description": "\n\nReturns the list of all available endpoints",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -120,9 +118,7 @@
       "get": {
         "summary": "Health Status ",
         "description": "\n\nReturns the current service health\n\nThis endpoint is useful for automated service checks.",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Service is healthy",
@@ -154,9 +150,7 @@
       "get": {
         "summary": "Service Status ",
         "description": "\n\nReturns the current service status along with node version and sync status",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -327,24 +321,26 @@
                     }
                   }
                 },
-                "example": {
-                  "time": "2021-04-22T02:00:00Z",
-                  "bucket": "h",
-                  "height_change": 8,
-                  "peers": 844,
-                  "blockchains": 7,
-                  "active_validators": 927,
-                  "pending_validators": 0,
-                  "validator_uptime": 0,
-                  "active_delegations": 6896,
-                  "pending_delegations": 0,
-                  "min_validator_stake": 0,
-                  "min_delegator_stake": 0,
-                  "tx_fee": 0,
-                  "create_tx_fee": 0,
-                  "total_staked": "210234424485335687",
-                  "total_delegated": "88892179030090484"
-                }
+                "example": [
+                  {
+                    "time": "2021-04-22T02:00:00Z",
+                    "bucket": "h",
+                    "height_change": 8,
+                    "peers": 844,
+                    "blockchains": 7,
+                    "active_validators": 927,
+                    "pending_validators": 0,
+                    "validator_uptime": 0,
+                    "active_delegations": 6896,
+                    "pending_delegations": 0,
+                    "min_validator_stake": 0,
+                    "min_delegator_stake": 0,
+                    "tx_fee": 0,
+                    "create_tx_fee": 0,
+                    "total_staked": "210234424485335687",
+                    "total_delegated": "88892179030090484"
+                  }
+                ]
               }
             }
           }
@@ -408,13 +404,15 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "2U94JFY14wfAuDUEkyfLi8qY7NpVmWWHLDhYNCQc8gPqjVwmk2",
-                  "type": "nft",
-                  "name": "00dot00dot00",
-                  "symbol": "DOTZ",
-                  "denomination": 0
-                }
+                "example": [
+                  {
+                    "id": "2U94JFY14wfAuDUEkyfLi8qY7NpVmWWHLDhYNCQc8gPqjVwmk2",
+                    "type": "nft",
+                    "name": "00dot00dot00",
+                    "symbol": "DOTZ",
+                    "denomination": 0
+                  }
+                ]
               }
             }
           }
@@ -496,9 +494,7 @@
       "get": {
         "summary": "Chains list ",
         "description": "\n\nReturns list of all chains",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -532,13 +528,15 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "GF5KEgiGs2yhDFTL1KgfmszU61U3ipSMpQJZsra5nFysots68",
-                  "name": "Bthereum",
-                  "vm": "mgj786NP7uDwBCcq6YwThhaN8FLyybkCa4zBWTQbNgmK6k9A6",
-                  "subnet": "29ejv3iGb7xiAiCiTyxqm5cSR81CkitmWttxddRcr5wnrC3uhW",
-                  "network": 1
-                }
+                "example": [
+                  {
+                    "id": "GF5KEgiGs2yhDFTL1KgfmszU61U3ipSMpQJZsra5nFysots68",
+                    "name": "Bthereum",
+                    "vm": "mgj786NP7uDwBCcq6YwThhaN8FLyybkCa4zBWTQbNgmK6k9A6",
+                    "subnet": "29ejv3iGb7xiAiCiTyxqm5cSR81CkitmWttxddRcr5wnrC3uhW",
+                    "network": 1
+                  }
+                ]
               }
             }
           }
@@ -553,9 +551,7 @@
       "get": {
         "summary": "Chain indexing statuses ",
         "description": "\n\nReturns current indexing status for primary chains",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -589,13 +585,15 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "11111111111111111111111111111111LpoYY",
-                  "index_id": 644773,
-                  "index_time": "2021-07-19T15:36:52.522053Z",
-                  "tip_id": 644773,
-                  "tip_time": "2021-07-19T15:36:52.522053Z"
-                }
+                "example": [
+                  {
+                    "id": "11111111111111111111111111111111LpoYY",
+                    "index_id": 644773,
+                    "index_time": "2021-07-19T15:36:52.522053Z",
+                    "tip_id": 644773,
+                    "tip_time": "2021-07-19T15:36:52.522053Z"
+                  }
+                ]
               }
             }
           }
@@ -610,9 +608,7 @@
       "get": {
         "summary": "Active Validators ",
         "description": "\n\nReturns a collection of active validators",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -710,29 +706,31 @@
                     }
                   }
                 },
-                "example": {
-                  "node_id": "NodeID-Jp9FEmmXG3EoYpfatzkzvg5pyxvd6nUEN",
-                  "stake_amount": "2000000000000",
-                  "stake_percent": 0.0009513189882656466,
-                  "potential_reward": "120474792725",
-                  "reward_address": "P-avax1dlgpssepfscqsmatk05wrtt7dqyxnua4sp3zy2",
-                  "active": true,
-                  "active_start_time": "2021-02-14T04:19:10Z",
-                  "active_end_time": "2021-09-18T11:00:26Z",
-                  "active_progress_percent": 30.939804161041387,
-                  "uptime": 93.80999803543091,
-                  "delegations_count": 0,
-                  "delegations_percent": 0,
-                  "delegated_amount": "0",
-                  "delegated_amount_percent": 0,
-                  "delegation_fee": 2,
-                  "capacity": "8000000000000",
-                  "capacity_percent": 0,
-                  "first_height": 409696,
-                  "last_height": 409696,
-                  "created_at": "2021-02-14T04:21:03.691352Z",
-                  "updated_at": "2021-04-22T02:18:29.079797Z"
-                }
+                "example": [
+                  {
+                    "node_id": "NodeID-Jp9FEmmXG3EoYpfatzkzvg5pyxvd6nUEN",
+                    "stake_amount": "2000000000000",
+                    "stake_percent": 0.0009513189882656466,
+                    "potential_reward": "120474792725",
+                    "reward_address": "P-avax1dlgpssepfscqsmatk05wrtt7dqyxnua4sp3zy2",
+                    "active": true,
+                    "active_start_time": "2021-02-14T04:19:10Z",
+                    "active_end_time": "2021-09-18T11:00:26Z",
+                    "active_progress_percent": 30.939804161041387,
+                    "uptime": 93.80999803543091,
+                    "delegations_count": 0,
+                    "delegations_percent": 0,
+                    "delegated_amount": "0",
+                    "delegated_amount_percent": 0,
+                    "delegation_fee": 2,
+                    "capacity": "8000000000000",
+                    "capacity_percent": 0,
+                    "first_height": 409696,
+                    "last_height": 409696,
+                    "created_at": "2021-02-14T04:21:03.691352Z",
+                    "updated_at": "2021-04-22T02:18:29.079797Z"
+                  }
+                ]
               }
             }
           }
@@ -1015,20 +1013,22 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "5b2f32c5b779790d97047e07af993dc0c4fe23cd",
-                  "node_id": "NodeID-AWPFmXs1VyVmGod6eg14ZC67QZafBN8BZ",
-                  "stake_amount": "200000000000",
-                  "potential_reward": "1025559498",
-                  "reward_address": "P-avax1vr6ss2xj6r9qsgqsz47w77a8kncpl8tyexsx3j",
-                  "active": true,
-                  "active_start_time": "2021-04-22T01:42:08Z",
-                  "active_end_time": "2021-05-13T01:51:35Z",
-                  "first_height": 409675,
-                  "last_height": 409698,
-                  "created_at": "2021-04-22T01:42:29.079802Z",
-                  "updated_at": "2021-04-22T02:25:29.079839Z"
-                }
+                "example": [
+                  {
+                    "id": "5b2f32c5b779790d97047e07af993dc0c4fe23cd",
+                    "node_id": "NodeID-AWPFmXs1VyVmGod6eg14ZC67QZafBN8BZ",
+                    "stake_amount": "200000000000",
+                    "potential_reward": "1025559498",
+                    "reward_address": "P-avax1vr6ss2xj6r9qsgqsz47w77a8kncpl8tyexsx3j",
+                    "active": true,
+                    "active_start_time": "2021-04-22T01:42:08Z",
+                    "active_end_time": "2021-05-13T01:51:35Z",
+                    "first_height": 409675,
+                    "last_height": 409698,
+                    "created_at": "2021-04-22T01:42:29.079802Z",
+                    "updated_at": "2021-04-22T02:25:29.079839Z"
+                  }
+                ]
               }
             }
           }
@@ -1039,7 +1039,7 @@
         "operationId": "get--delegations"
       }
     },
-    "/accounts/{adddress}": {
+    "/accounts/{address}": {
       "get": {
         "summary": "Account Details ",
         "description": "\n\nReturns account balances",
@@ -1093,7 +1093,7 @@
         "tags": [
           "Accounts"
         ],
-        "operationId": "get--accounts-adddress"
+        "operationId": "get--accounts-address"
       }
     },
     "/blocks": {
@@ -1192,14 +1192,16 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "BsnXKtvhyBUzXS87BbAfjAbFxfwTc4N8KGEiCkmA1kCV1fpct",
-                  "type": "commit",
-                  "parent": "2BUyTAMr4UZ5FjF6fbPsWRDqpXrUMRWCaJaTC3X2idZW6bdRXZ",
-                  "chain": "11111111111111111111111111111111LpoYY",
-                  "height": 640016,
-                  "timestamp": "2021-07-16T15:19:45.468737Z"
-                }
+                "example": [
+                  {
+                    "id": "BsnXKtvhyBUzXS87BbAfjAbFxfwTc4N8KGEiCkmA1kCV1fpct",
+                    "type": "commit",
+                    "parent": "2BUyTAMr4UZ5FjF6fbPsWRDqpXrUMRWCaJaTC3X2idZW6bdRXZ",
+                    "chain": "11111111111111111111111111111111LpoYY",
+                    "height": 640016,
+                    "timestamp": "2021-07-16T15:19:45.468737Z"
+                  }
+                ]
               }
             }
           }
@@ -1215,7 +1217,15 @@
         "summary": "Block details ",
         "description": "\n\nReturns block details by block hash",
         "parameters": [
-
+          {
+            "in": "path",
+            "name": "hash",
+            "required": true,
+            "description": "Block hash",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1555,83 +1565,85 @@
                     }
                   }
                 },
-                "example": {
-                  "id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
-                  "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
-                  "type": "x_base",
-                  "timestamp": "2021-07-16T14:32:48.771734Z",
-                  "status": "accepted",
-                  "memo": "",
-                  "memo_text": "",
-                  "fee": 1000000,
-                  "inputs": [
-                    {
-                      "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
-                      "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
-                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
-                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
-                      "type": "transfer",
-                      "index": 1,
-                      "locktime": 0,
-                      "threshold": 1,
-                      "amount": 246420423888,
-                      "group": 0,
-                      "addresses": [
-                        "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
-                      ],
-                      "stake": false,
-                      "reward": false,
-                      "spent": true,
-                      "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
-                    }
-                  ],
-                  "input_amounts": {
-                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
-                  },
-                  "outputs": [
-                    {
-                      "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
-                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
-                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
-                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
-                      "type": "transfer",
-                      "index": 0,
-                      "locktime": 0,
-                      "threshold": 1,
-                      "amount": 31300000000,
-                      "group": 0,
-                      "addresses": [
-                        "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
-                      ],
-                      "stake": false,
-                      "reward": false,
-                      "spent": false,
-                      "spent_in_tx": null
+                "example": [
+                  {
+                    "id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                    "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                    "type": "x_base",
+                    "timestamp": "2021-07-16T14:32:48.771734Z",
+                    "status": "accepted",
+                    "memo": "",
+                    "memo_text": "",
+                    "fee": 1000000,
+                    "inputs": [
+                      {
+                        "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
+                        "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
+                        "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                        "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                        "type": "transfer",
+                        "index": 1,
+                        "locktime": 0,
+                        "threshold": 1,
+                        "amount": 246420423888,
+                        "group": 0,
+                        "addresses": [
+                          "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
+                        ],
+                        "stake": false,
+                        "reward": false,
+                        "spent": true,
+                        "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                      }
+                    ],
+                    "input_amounts": {
+                      "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
                     },
-                    {
-                      "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
-                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
-                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
-                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
-                      "type": "transfer",
-                      "index": 1,
-                      "locktime": 0,
-                      "threshold": 1,
-                      "amount": 215119423888,
-                      "group": 0,
-                      "addresses": [
-                        "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
-                      ],
-                      "stake": false,
-                      "reward": false,
-                      "spent": false,
-                      "spent_in_tx": null
+                    "outputs": [
+                      {
+                        "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                        "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                        "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                        "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                        "type": "transfer",
+                        "index": 0,
+                        "locktime": 0,
+                        "threshold": 1,
+                        "amount": 31300000000,
+                        "group": 0,
+                        "addresses": [
+                          "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                        ],
+                        "stake": false,
+                        "reward": false,
+                        "spent": false,
+                        "spent_in_tx": null
+                      },
+                      {
+                        "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
+                        "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                        "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                        "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                        "type": "transfer",
+                        "index": 1,
+                        "locktime": 0,
+                        "threshold": 1,
+                        "amount": 215119423888,
+                        "group": 0,
+                        "addresses": [
+                          "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
+                        ],
+                        "stake": false,
+                        "reward": false,
+                        "spent": false,
+                        "spent_in_tx": null
+                      }
+                    ],
+                    "output_amounts": {
+                      "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
                     }
-                  ],
-                  "output_amounts": {
-                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
                   }
-                }
+                ]
               }
             }
           }
@@ -2033,9 +2045,7 @@
       "get": {
         "summary": "Transaction type stats ",
         "description": "\n\nReturns available transaction types and their counts",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -2057,10 +2067,12 @@
                     }
                   }
                 },
-                "example": {
-                  "type": "c_evm",
-                  "total_count": 3373474
-                }
+                "example": [
+                  {
+                    "type": "c_evm",
+                    "total_count": 3373474
+                  }
+                ]
               }
             }
           }
