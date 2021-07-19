@@ -425,13 +425,13 @@
         "operationId": "get--assets"
       }
     },
-    "/assets/:id": {
+    "/assets/{id}": {
       "get": {
         "summary": "Asset details ",
         "description": "\n\nReturns asset details for a given ID",
         "parameters": [
           {
-            "in": "param",
+            "in": "path",
             "name": "id",
             "required": true,
             "description": "Asset ID",
@@ -489,7 +489,7 @@
         "tags": [
           "General"
         ],
-        "operationId": "get--assets-:id"
+        "operationId": "get--assets-id"
       }
     },
     "/chains": {
@@ -547,6 +547,63 @@
           "General"
         ],
         "operationId": "get--chains"
+      }
+    },
+    "/chain_sync_statuses": {
+      "get": {
+        "summary": "Chain indexing statuses ",
+        "description": "\n\nReturns current indexing status for primary chains",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "11111111111111111111111111111111LpoYY"
+                      },
+                      "index_id": {
+                        "type": "integer",
+                        "example": 644773
+                      },
+                      "index_time": {
+                        "type": "string",
+                        "example": "2021-07-19T15:36:52.522053Z"
+                      },
+                      "tip_id": {
+                        "type": "integer",
+                        "example": 644773
+                      },
+                      "tip_time": {
+                        "type": "string",
+                        "example": "2021-07-19T15:36:52.522053Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "11111111111111111111111111111111LpoYY",
+                  "index_id": 644773,
+                  "index_time": "2021-07-19T15:36:52.522053Z",
+                  "tip_id": 644773,
+                  "tip_time": "2021-07-19T15:36:52.522053Z"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--chain_sync_statuses"
       }
     },
     "/validators": {
@@ -1153,7 +1210,7 @@
         "operationId": "get--blocks"
       }
     },
-    "/blocks/:hash": {
+    "/blocks/{hash}": {
       "get": {
         "summary": "Block details ",
         "description": "\n\nReturns block details by block hash",
@@ -1233,7 +1290,7 @@
         "tags": [
           "Blocks"
         ],
-        "operationId": "get--blocks-:hash"
+        "operationId": "get--blocks-hash"
       }
     },
     "/transactions": {
@@ -1585,7 +1642,7 @@
         "operationId": "get--transactions"
       }
     },
-    "/transactions/:id": {
+    "/transactions/{id}": {
       "get": {
         "summary": "Transaction details ",
         "description": "\n\nReturns transaction details for a given ID/hash",
@@ -1829,10 +1886,10 @@
         "tags": [
           "Transactions"
         ],
-        "operationId": "get--transactions-:id"
+        "operationId": "get--transactions-id"
       }
     },
-    "/transaction_outputs/:id": {
+    "/transaction_outputs/{id}": {
       "get": {
         "summary": "Transaction output details ",
         "description": "\n\nReturns transaction output details for a given ID",
@@ -1969,7 +2026,7 @@
         "tags": [
           "Transactions"
         ],
-        "operationId": "get--transaction_outputs-:id"
+        "operationId": "get--transaction_outputs-id"
       }
     },
     "/transaction_types": {
