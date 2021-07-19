@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------------------
 FROM golang:1.16 AS build
 
+ARG GIT_COMMIT
+
 WORKDIR /go/src/github.com/figment-networks/avalanche-indexer
 
 COPY ./go.mod .
@@ -20,7 +22,7 @@ RUN make setup
 
 RUN \
   GO_VERSION=$(go version | awk {'print $3'}) \
-  GIT_COMMIT=$(git rev-parse HEAD) \
+  GIT_COMMIT=$GIT_COMMIT \
   make build
 
 # ------------------------------------------------------------------------------

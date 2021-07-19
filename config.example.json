@@ -1,0 +1,11 @@
+{
+  "database_url": "postgres://localhost/avalanche-indexer",
+  "log_level": "info",
+  "rpc_endpoint": "http://localhost:9650",
+  "sync_interval": "60s",
+  "purge_interval": "5m",
+  "server_addr": "localhost:8080",
+  "network_id": 1,
+  "evm_network_id": 1,
+  "evm_chain_id": 43114
+}

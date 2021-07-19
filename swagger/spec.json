@@ -1,0 +1,2018 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.3.0",
+    "title": "Avalanche Indexer API",
+    "description": "Avalanche Indexer API provides a series of endpoints for indexed data on Avalanche blockchain",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://avalanche--mainnet--indexer.datahub.figment.io/apikey/APIKEY",
+      "description": "Mainnet"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Service Index ",
+        "description": "\n\nReturns the list of all available endpoints",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "endpoints": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "path": "/",
+                          "description": "Index"
+                        },
+                        {
+                          "path": "/health",
+                          "description": "Get indexer health"
+                        },
+                        {
+                          "path": "/status",
+                          "description": "Get indexer status"
+                        },
+                        {
+                          "path": "/network_stats",
+                          "description": "Get network stats"
+                        },
+                        {
+                          "path": "/validators",
+                          "description": "Get current validator set"
+                        },
+                        {
+                          "path": "/validators/:id",
+                          "description": "Get validator details"
+                        },
+                        {
+                          "path": "/delegations",
+                          "description": "Get active delegations"
+                        },
+                        {
+                          "path": "/address/:id",
+                          "description": "Get address details"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "endpoints": [
+                    {
+                      "path": "/",
+                      "description": "Index"
+                    },
+                    {
+                      "path": "/health",
+                      "description": "Get indexer health"
+                    },
+                    {
+                      "path": "/status",
+                      "description": "Get indexer status"
+                    },
+                    {
+                      "path": "/network_stats",
+                      "description": "Get network stats"
+                    },
+                    {
+                      "path": "/validators",
+                      "description": "Get current validator set"
+                    },
+                    {
+                      "path": "/validators/:id",
+                      "description": "Get validator details"
+                    },
+                    {
+                      "path": "/delegations",
+                      "description": "Get active delegations"
+                    },
+                    {
+                      "path": "/address/:id",
+                      "description": "Get address details"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--"
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Status ",
+        "description": "\n\nReturns the current service health\n\nThis endpoint is useful for automated service checks.",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "healthy": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "example": {
+                  "healthy": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--health"
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Service Status ",
+        "description": "\n\nReturns the current service status along with node version and sync status",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "app_name": {
+                      "type": "string",
+                      "example": "avalanche-indexer"
+                    },
+                    "app_version": {
+                      "type": "string",
+                      "example": "0.2.2"
+                    },
+                    "git_commit": {
+                      "type": "string",
+                      "example": "8c2efdd63253973682423d8ef563b8a6a6d9d1e7"
+                    },
+                    "go_version": {
+                      "type": "string",
+                      "example": "go1.15.8"
+                    },
+                    "network_name": {
+                      "type": "string",
+                      "example": "mainnet"
+                    },
+                    "node_version": {
+                      "type": "string",
+                      "example": "avalanche/1.3.0"
+                    },
+                    "sync_status": {
+                      "type": "string",
+                      "example": "current"
+                    },
+                    "sync_time": {
+                      "type": "string",
+                      "example": "2021-04-22T02:11:29.079984Z"
+                    }
+                  }
+                },
+                "example": {
+                  "app_name": "avalanche-indexer",
+                  "app_version": "0.2.2",
+                  "git_commit": "8c2efdd63253973682423d8ef563b8a6a6d9d1e7",
+                  "go_version": "go1.15.8",
+                  "network_name": "mainnet",
+                  "node_version": "avalanche/1.3.0",
+                  "sync_status": "current",
+                  "sync_time": "2021-04-22T02:11:29.079984Z"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--status"
+      }
+    },
+    "/network_stats": {
+      "get": {
+        "summary": "Network Stats ",
+        "description": "\n\nReturns network statistics for a given time period",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "bucket",
+            "required": false,
+            "description": "Time period. Daily - `d`, Hourly - `h`",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "h",
+                "d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Number of records to return",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                24
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "time": {
+                        "type": "string",
+                        "example": "2021-04-22T02:00:00Z"
+                      },
+                      "bucket": {
+                        "type": "string",
+                        "example": "h"
+                      },
+                      "height_change": {
+                        "type": "integer",
+                        "example": 8
+                      },
+                      "peers": {
+                        "type": "integer",
+                        "example": 844
+                      },
+                      "blockchains": {
+                        "type": "integer",
+                        "example": 7
+                      },
+                      "active_validators": {
+                        "type": "integer",
+                        "example": 927
+                      },
+                      "pending_validators": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "validator_uptime": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "active_delegations": {
+                        "type": "integer",
+                        "example": 6896
+                      },
+                      "pending_delegations": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "min_validator_stake": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "min_delegator_stake": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "tx_fee": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "create_tx_fee": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "total_staked": {
+                        "type": "string",
+                        "example": "210234424485335687"
+                      },
+                      "total_delegated": {
+                        "type": "string",
+                        "example": "88892179030090484"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "time": "2021-04-22T02:00:00Z",
+                  "bucket": "h",
+                  "height_change": 8,
+                  "peers": 844,
+                  "blockchains": 7,
+                  "active_validators": 927,
+                  "pending_validators": 0,
+                  "validator_uptime": 0,
+                  "active_delegations": 6896,
+                  "pending_delegations": 0,
+                  "min_validator_stake": 0,
+                  "min_delegator_stake": 0,
+                  "tx_fee": 0,
+                  "create_tx_fee": 0,
+                  "total_staked": "210234424485335687",
+                  "total_delegated": "88892179030090484"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--network_stats"
+      }
+    },
+    "/assets": {
+      "get": {
+        "summary": "Assets list ",
+        "description": "\n\nReturns a list of all Avalanche assets",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Filter by asset type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fixed_cap",
+                "variable_cap",
+                "nft"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "2U94JFY14wfAuDUEkyfLi8qY7NpVmWWHLDhYNCQc8gPqjVwmk2"
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "nft"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "00dot00dot00"
+                      },
+                      "symbol": {
+                        "type": "string",
+                        "example": "DOTZ"
+                      },
+                      "denomination": {
+                        "type": "integer",
+                        "example": 0
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "2U94JFY14wfAuDUEkyfLi8qY7NpVmWWHLDhYNCQc8gPqjVwmk2",
+                  "type": "nft",
+                  "name": "00dot00dot00",
+                  "symbol": "DOTZ",
+                  "denomination": 0
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--assets"
+      }
+    },
+    "/assets/:id": {
+      "get": {
+        "summary": "Asset details ",
+        "description": "\n\nReturns asset details for a given ID",
+        "parameters": [
+          {
+            "in": "param",
+            "name": "id",
+            "required": true,
+            "description": "Asset ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "fixed_cap"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Avalanche"
+                    },
+                    "symbol": {
+                      "type": "string",
+                      "example": "AVAX"
+                    },
+                    "denomination": {
+                      "type": "integer",
+                      "example": 9
+                    },
+                    "transactions_count": {
+                      "type": "integer",
+                      "example": 4808311
+                    }
+                  }
+                },
+                "example": {
+                  "id": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                  "type": "fixed_cap",
+                  "name": "Avalanche",
+                  "symbol": "AVAX",
+                  "denomination": 9,
+                  "transactions_count": 4808311
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--assets-:id"
+      }
+    },
+    "/chains": {
+      "get": {
+        "summary": "Chains list ",
+        "description": "\n\nReturns list of all chains",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "GF5KEgiGs2yhDFTL1KgfmszU61U3ipSMpQJZsra5nFysots68"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Bthereum"
+                      },
+                      "vm": {
+                        "type": "string",
+                        "example": "mgj786NP7uDwBCcq6YwThhaN8FLyybkCa4zBWTQbNgmK6k9A6"
+                      },
+                      "subnet": {
+                        "type": "string",
+                        "example": "29ejv3iGb7xiAiCiTyxqm5cSR81CkitmWttxddRcr5wnrC3uhW"
+                      },
+                      "network": {
+                        "type": "integer",
+                        "example": 1
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "GF5KEgiGs2yhDFTL1KgfmszU61U3ipSMpQJZsra5nFysots68",
+                  "name": "Bthereum",
+                  "vm": "mgj786NP7uDwBCcq6YwThhaN8FLyybkCa4zBWTQbNgmK6k9A6",
+                  "subnet": "29ejv3iGb7xiAiCiTyxqm5cSR81CkitmWttxddRcr5wnrC3uhW",
+                  "network": 1
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "operationId": "get--chains"
+      }
+    },
+    "/validators": {
+      "get": {
+        "summary": "Active Validators ",
+        "description": "\n\nReturns a collection of active validators",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "node_id": {
+                        "type": "string",
+                        "example": "NodeID-Jp9FEmmXG3EoYpfatzkzvg5pyxvd6nUEN"
+                      },
+                      "stake_amount": {
+                        "type": "string",
+                        "example": "2000000000000"
+                      },
+                      "stake_percent": {
+                        "type": "number",
+                        "example": 0.0009513189882656466
+                      },
+                      "potential_reward": {
+                        "type": "string",
+                        "example": "120474792725"
+                      },
+                      "reward_address": {
+                        "type": "string",
+                        "example": "P-avax1dlgpssepfscqsmatk05wrtt7dqyxnua4sp3zy2"
+                      },
+                      "active": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "active_start_time": {
+                        "type": "string",
+                        "example": "2021-02-14T04:19:10Z"
+                      },
+                      "active_end_time": {
+                        "type": "string",
+                        "example": "2021-09-18T11:00:26Z"
+                      },
+                      "active_progress_percent": {
+                        "type": "number",
+                        "example": 30.939804161041387
+                      },
+                      "uptime": {
+                        "type": "number",
+                        "example": 93.80999803543091
+                      },
+                      "delegations_count": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "delegations_percent": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "delegated_amount": {
+                        "type": "string",
+                        "example": "0"
+                      },
+                      "delegated_amount_percent": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "delegation_fee": {
+                        "type": "integer",
+                        "example": 2
+                      },
+                      "capacity": {
+                        "type": "string",
+                        "example": "8000000000000"
+                      },
+                      "capacity_percent": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "first_height": {
+                        "type": "integer",
+                        "example": 409696
+                      },
+                      "last_height": {
+                        "type": "integer",
+                        "example": 409696
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "example": "2021-02-14T04:21:03.691352Z"
+                      },
+                      "updated_at": {
+                        "type": "string",
+                        "example": "2021-04-22T02:18:29.079797Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "node_id": "NodeID-Jp9FEmmXG3EoYpfatzkzvg5pyxvd6nUEN",
+                  "stake_amount": "2000000000000",
+                  "stake_percent": 0.0009513189882656466,
+                  "potential_reward": "120474792725",
+                  "reward_address": "P-avax1dlgpssepfscqsmatk05wrtt7dqyxnua4sp3zy2",
+                  "active": true,
+                  "active_start_time": "2021-02-14T04:19:10Z",
+                  "active_end_time": "2021-09-18T11:00:26Z",
+                  "active_progress_percent": 30.939804161041387,
+                  "uptime": 93.80999803543091,
+                  "delegations_count": 0,
+                  "delegations_percent": 0,
+                  "delegated_amount": "0",
+                  "delegated_amount_percent": 0,
+                  "delegation_fee": 2,
+                  "capacity": "8000000000000",
+                  "capacity_percent": 0,
+                  "first_height": 409696,
+                  "last_height": 409696,
+                  "created_at": "2021-02-14T04:21:03.691352Z",
+                  "updated_at": "2021-04-22T02:18:29.079797Z"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Staking"
+        ],
+        "operationId": "get--validators"
+      }
+    },
+    "/validators/{id}": {
+      "get": {
+        "summary": "Validator Details ",
+        "description": "\n\nReturns validator details and associated data",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Validator Node ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "delegations": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "id": "0397094d96455816c1d93128393b3253262b68bb",
+                          "node_id": "NodeID-8gx2j2546NwHiqwjRqdy9uKfpDPSKoDVb",
+                          "stake_amount": "26461500000",
+                          "potential_reward": "946515102",
+                          "reward_address": "P-avax1626th8k05ep94mzw4smvely8hmrlgnqpfwpvk4",
+                          "active": true,
+                          "active_start_time": "2021-01-27T13:38:15Z",
+                          "active_end_time": "2021-06-08T12:40:52Z",
+                          "first_height": 285725,
+                          "last_height": 409697,
+                          "created_at": "2021-01-27T13:38:32.22744Z",
+                          "updated_at": "2021-04-22T02:20:29.079779Z"
+                        }
+                      ]
+                    },
+                    "stats_24h": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "time": "2021-04-22T02:00:00Z",
+                          "bucket": "h",
+                          "uptime_min": 99.97,
+                          "uptime_max": 99.97,
+                          "uptime_avg": 99.97,
+                          "stake_amount": 2000000000000,
+                          "stake_percent": 0.0009513189882656466,
+                          "delegations_count": 5,
+                          "delegations_percent": 0.07,
+                          "delegated_amount": 412603490406,
+                          "delegated_amount_percent": 0
+                        }
+                      ]
+                    },
+                    "stats_30d": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "time": "2021-04-22T00:00:00Z",
+                          "bucket": "d",
+                          "uptime_min": 99.97,
+                          "uptime_max": 99.97,
+                          "uptime_avg": 99.97,
+                          "stake_amount": 2000000000000,
+                          "stake_percent": 0.0009513197585872734,
+                          "delegations_count": 5,
+                          "delegations_percent": 0.07,
+                          "delegated_amount": 412603490406,
+                          "delegated_amount_percent": 0
+                        }
+                      ]
+                    },
+                    "validator": {
+                      "type": "object",
+                      "example": {
+                        "node_id": "NodeID-8gx2j2546NwHiqwjRqdy9uKfpDPSKoDVb",
+                        "stake_amount": "2000000000000",
+                        "stake_percent": 0.0009513189882656466,
+                        "potential_reward": "102617375642",
+                        "reward_address": "P-avax1kkjr9znd0ya3h2h7zs4egtwr7l7sqctuw0p3gg",
+                        "active": true,
+                        "active_start_time": "2020-12-08T17:58:13Z",
+                        "active_end_time": "2021-06-08T16:55:52Z",
+                        "active_progress_percent": 73.83558626044213,
+                        "uptime": 99.97000098228455,
+                        "delegations_count": 5,
+                        "delegations_percent": 0.0725268349289237,
+                        "delegated_amount": "412603490406",
+                        "delegated_amount_percent": 0.0004641646639264132,
+                        "delegation_fee": 2,
+                        "capacity": "7587396509594",
+                        "capacity_percent": 5.157543630075,
+                        "first_height": 409697,
+                        "last_height": 409697,
+                        "created_at": "2020-12-08T17:58:47.047544Z",
+                        "updated_at": "2021-04-22T02:20:29.079779Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "delegations": [
+                    {
+                      "id": "0397094d96455816c1d93128393b3253262b68bb",
+                      "node_id": "NodeID-8gx2j2546NwHiqwjRqdy9uKfpDPSKoDVb",
+                      "stake_amount": "26461500000",
+                      "potential_reward": "946515102",
+                      "reward_address": "P-avax1626th8k05ep94mzw4smvely8hmrlgnqpfwpvk4",
+                      "active": true,
+                      "active_start_time": "2021-01-27T13:38:15Z",
+                      "active_end_time": "2021-06-08T12:40:52Z",
+                      "first_height": 285725,
+                      "last_height": 409697,
+                      "created_at": "2021-01-27T13:38:32.22744Z",
+                      "updated_at": "2021-04-22T02:20:29.079779Z"
+                    }
+                  ],
+                  "stats_24h": [
+                    {
+                      "time": "2021-04-22T02:00:00Z",
+                      "bucket": "h",
+                      "uptime_min": 99.97,
+                      "uptime_max": 99.97,
+                      "uptime_avg": 99.97,
+                      "stake_amount": 2000000000000,
+                      "stake_percent": 0.0009513189882656466,
+                      "delegations_count": 5,
+                      "delegations_percent": 0.07,
+                      "delegated_amount": 412603490406,
+                      "delegated_amount_percent": 0
+                    }
+                  ],
+                  "stats_30d": [
+                    {
+                      "time": "2021-04-22T00:00:00Z",
+                      "bucket": "d",
+                      "uptime_min": 99.97,
+                      "uptime_max": 99.97,
+                      "uptime_avg": 99.97,
+                      "stake_amount": 2000000000000,
+                      "stake_percent": 0.0009513197585872734,
+                      "delegations_count": 5,
+                      "delegations_percent": 0.07,
+                      "delegated_amount": 412603490406,
+                      "delegated_amount_percent": 0
+                    }
+                  ],
+                  "validator": {
+                    "node_id": "NodeID-8gx2j2546NwHiqwjRqdy9uKfpDPSKoDVb",
+                    "stake_amount": "2000000000000",
+                    "stake_percent": 0.0009513189882656466,
+                    "potential_reward": "102617375642",
+                    "reward_address": "P-avax1kkjr9znd0ya3h2h7zs4egtwr7l7sqctuw0p3gg",
+                    "active": true,
+                    "active_start_time": "2020-12-08T17:58:13Z",
+                    "active_end_time": "2021-06-08T16:55:52Z",
+                    "active_progress_percent": 73.83558626044213,
+                    "uptime": 99.97000098228455,
+                    "delegations_count": 5,
+                    "delegations_percent": 0.0725268349289237,
+                    "delegated_amount": "412603490406",
+                    "delegated_amount_percent": 0.0004641646639264132,
+                    "delegation_fee": 2,
+                    "capacity": "7587396509594",
+                    "capacity_percent": 5.157543630075,
+                    "first_height": 409697,
+                    "last_height": 409697,
+                    "created_at": "2020-12-08T17:58:47.047544Z",
+                    "updated_at": "2021-04-22T02:20:29.079779Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Staking"
+        ],
+        "operationId": "get--validators-id"
+      }
+    },
+    "/delegations": {
+      "get": {
+        "summary": "Active Delegations ",
+        "description": "\n\nReturns active delegations records",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "node_id",
+            "required": false,
+            "description": "Filter delegations by validator node ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reward_address",
+            "required": false,
+            "description": "Filter delegations by a reward address",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "5b2f32c5b779790d97047e07af993dc0c4fe23cd"
+                      },
+                      "node_id": {
+                        "type": "string",
+                        "example": "NodeID-AWPFmXs1VyVmGod6eg14ZC67QZafBN8BZ"
+                      },
+                      "stake_amount": {
+                        "type": "string",
+                        "example": "200000000000"
+                      },
+                      "potential_reward": {
+                        "type": "string",
+                        "example": "1025559498"
+                      },
+                      "reward_address": {
+                        "type": "string",
+                        "example": "P-avax1vr6ss2xj6r9qsgqsz47w77a8kncpl8tyexsx3j"
+                      },
+                      "active": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "active_start_time": {
+                        "type": "string",
+                        "example": "2021-04-22T01:42:08Z"
+                      },
+                      "active_end_time": {
+                        "type": "string",
+                        "example": "2021-05-13T01:51:35Z"
+                      },
+                      "first_height": {
+                        "type": "integer",
+                        "example": 409675
+                      },
+                      "last_height": {
+                        "type": "integer",
+                        "example": 409698
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "example": "2021-04-22T01:42:29.079802Z"
+                      },
+                      "updated_at": {
+                        "type": "string",
+                        "example": "2021-04-22T02:25:29.079839Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "5b2f32c5b779790d97047e07af993dc0c4fe23cd",
+                  "node_id": "NodeID-AWPFmXs1VyVmGod6eg14ZC67QZafBN8BZ",
+                  "stake_amount": "200000000000",
+                  "potential_reward": "1025559498",
+                  "reward_address": "P-avax1vr6ss2xj6r9qsgqsz47w77a8kncpl8tyexsx3j",
+                  "active": true,
+                  "active_start_time": "2021-04-22T01:42:08Z",
+                  "active_end_time": "2021-05-13T01:51:35Z",
+                  "first_height": 409675,
+                  "last_height": 409698,
+                  "created_at": "2021-04-22T01:42:29.079802Z",
+                  "updated_at": "2021-04-22T02:25:29.079839Z"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Staking"
+        ],
+        "operationId": "get--delegations"
+      }
+    },
+    "/accounts/{adddress}": {
+      "get": {
+        "summary": "Account Details ",
+        "description": "\n\nReturns account balances",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "required": true,
+            "description": "Blockchain address (X/P/C)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balance": {
+                      "type": "string",
+                      "example": "2295690000"
+                    },
+                    "unlocked": {
+                      "type": "string",
+                      "example": "2295690000"
+                    },
+                    "lockedStakeable": {
+                      "type": "string",
+                      "example": "0"
+                    },
+                    "lockedNotStakeable": {
+                      "type": "string",
+                      "example": "0"
+                    }
+                  }
+                },
+                "example": {
+                  "balance": "2295690000",
+                  "unlocked": "2295690000",
+                  "lockedStakeable": "0",
+                  "lockedNotStakeable": "0"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "get--accounts-adddress"
+      }
+    },
+    "/blocks": {
+      "get": {
+        "summary": "Blocks search ",
+        "description": "\n\nReturns block matching the search parameters",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chain",
+            "required": true,
+            "description": "Chain ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_height",
+            "required": false,
+            "description": "Start height",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_height",
+            "required": false,
+            "description": "End height",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Block type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "proposal",
+                "standard",
+                "atomic",
+                "commit",
+                "abort",
+                "evm"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Results page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "BsnXKtvhyBUzXS87BbAfjAbFxfwTc4N8KGEiCkmA1kCV1fpct"
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "commit"
+                      },
+                      "parent": {
+                        "type": "string",
+                        "example": "2BUyTAMr4UZ5FjF6fbPsWRDqpXrUMRWCaJaTC3X2idZW6bdRXZ"
+                      },
+                      "chain": {
+                        "type": "string",
+                        "example": "11111111111111111111111111111111LpoYY"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "example": 640016
+                      },
+                      "timestamp": {
+                        "type": "string",
+                        "example": "2021-07-16T15:19:45.468737Z"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "BsnXKtvhyBUzXS87BbAfjAbFxfwTc4N8KGEiCkmA1kCV1fpct",
+                  "type": "commit",
+                  "parent": "2BUyTAMr4UZ5FjF6fbPsWRDqpXrUMRWCaJaTC3X2idZW6bdRXZ",
+                  "chain": "11111111111111111111111111111111LpoYY",
+                  "height": 640016,
+                  "timestamp": "2021-07-16T15:19:45.468737Z"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "get--blocks"
+      }
+    },
+    "/blocks/:hash": {
+      "get": {
+        "summary": "Block details ",
+        "description": "\n\nReturns block details by block hash",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "2Bok2WUr92N5jYSs8mmGfChw9sFZ4h83Ttfs4ngjywiqfaJMBw"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "commit"
+                    },
+                    "parent": {
+                      "type": "string",
+                      "example": "2WEk5pHvq6vKGvdEBSM8mCve1qpmt8cDmqbiZZxFDr6vK3Sbip"
+                    },
+                    "chain": {
+                      "type": "string",
+                      "example": "11111111111111111111111111111111LpoYY"
+                    },
+                    "height": {
+                      "type": "integer",
+                      "example": 640025
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2021-07-16T15:25:54.091248Z"
+                    }
+                  }
+                },
+                "example": {
+                  "id": "2Bok2WUr92N5jYSs8mmGfChw9sFZ4h83Ttfs4ngjywiqfaJMBw",
+                  "type": "commit",
+                  "parent": "2WEk5pHvq6vKGvdEBSM8mCve1qpmt8cDmqbiZZxFDr6vK3Sbip",
+                  "chain": "11111111111111111111111111111111LpoYY",
+                  "height": 640025,
+                  "timestamp": "2021-07-16T15:25:54.091248Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "record not found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                },
+                "example": {
+                  "error": "record not found",
+                  "status": 404
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "get--blocks-:hash"
+      }
+    },
+    "/transactions": {
+      "get": {
+        "summary": "Transaction search ",
+        "description": "\n\nReturns transactions matching the search parameters",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chain",
+            "required": false,
+            "description": "Filter by chain ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Filter by transaction type. Separate multiple values by comma.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "p_create_chain",
+                "p_create_subnet",
+                "p_add_subnet_validator",
+                "p_reward_validator",
+                "p_add_validator",
+                "p_add_delegator",
+                "p_import",
+                "p_export",
+                "x_base",
+                "x_import",
+                "x_export",
+                "x_create_asset",
+                "x_operation",
+                "c_atomic_export",
+                "c_atomic_import",
+                "c_evm"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_time",
+            "required": false,
+            "description": "Search range start time.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_time",
+            "required": false,
+            "description": "Search range end time.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_height",
+            "required": false,
+            "description": "Search range start block height (if applicable).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "block_hash",
+            "required": false,
+            "description": "Filter by block hash (if applicable).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "memo",
+            "required": false,
+            "description": "Filter by memo text field.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "address",
+            "required": false,
+            "description": "Filter by account address. Separate multiple values by comma.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "description": "Filter by asset ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Results page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid transaction type: foo"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                },
+                "example": {
+                  "error": "invalid transaction type: foo",
+                  "status": 400
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                      },
+                      "chain": {
+                        "type": "string",
+                        "example": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM"
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "x_base"
+                      },
+                      "timestamp": {
+                        "type": "string",
+                        "example": "2021-07-16T14:32:48.771734Z"
+                      },
+                      "status": {
+                        "type": "string",
+                        "example": "accepted"
+                      },
+                      "memo": {
+                        "type": "string",
+                        "example": ""
+                      },
+                      "memo_text": {
+                        "type": "string",
+                        "example": ""
+                      },
+                      "fee": {
+                        "type": "integer",
+                        "example": 1000000
+                      },
+                      "inputs": {
+                        "type": "array",
+                        "example": [
+                          {
+                            "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
+                            "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
+                            "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                            "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                            "type": "transfer",
+                            "index": 1,
+                            "locktime": 0,
+                            "threshold": 1,
+                            "amount": 246420423888,
+                            "group": 0,
+                            "addresses": [
+                              "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
+                            ],
+                            "stake": false,
+                            "reward": false,
+                            "spent": true,
+                            "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                          }
+                        ]
+                      },
+                      "input_amounts": {
+                        "type": "object",
+                        "example": {
+                          "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
+                        }
+                      },
+                      "outputs": {
+                        "type": "array",
+                        "example": [
+                          {
+                            "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                            "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                            "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                            "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                            "type": "transfer",
+                            "index": 0,
+                            "locktime": 0,
+                            "threshold": 1,
+                            "amount": 31300000000,
+                            "group": 0,
+                            "addresses": [
+                              "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                            ],
+                            "stake": false,
+                            "reward": false,
+                            "spent": false,
+                            "spent_in_tx": null
+                          },
+                          {
+                            "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
+                            "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                            "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                            "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                            "type": "transfer",
+                            "index": 1,
+                            "locktime": 0,
+                            "threshold": 1,
+                            "amount": 215119423888,
+                            "group": 0,
+                            "addresses": [
+                              "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
+                            ],
+                            "stake": false,
+                            "reward": false,
+                            "spent": false,
+                            "spent_in_tx": null
+                          }
+                        ]
+                      },
+                      "output_amounts": {
+                        "type": "object",
+                        "example": {
+                          "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                  "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                  "type": "x_base",
+                  "timestamp": "2021-07-16T14:32:48.771734Z",
+                  "status": "accepted",
+                  "memo": "",
+                  "memo_text": "",
+                  "fee": 1000000,
+                  "inputs": [
+                    {
+                      "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
+                      "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 1,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 246420423888,
+                      "group": 0,
+                      "addresses": [
+                        "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": true,
+                      "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                    }
+                  ],
+                  "input_amounts": {
+                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
+                  },
+                  "outputs": [
+                    {
+                      "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 0,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 31300000000,
+                      "group": 0,
+                      "addresses": [
+                        "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": false,
+                      "spent_in_tx": null
+                    },
+                    {
+                      "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
+                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 1,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 215119423888,
+                      "group": 0,
+                      "addresses": [
+                        "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": false,
+                      "spent_in_tx": null
+                    }
+                  ],
+                  "output_amounts": {
+                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "get--transactions"
+      }
+    },
+    "/transactions/:id": {
+      "get": {
+        "summary": "Transaction details ",
+        "description": "\n\nReturns transaction details for a given ID/hash",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Transaction ID/hash",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                    },
+                    "chain": {
+                      "type": "string",
+                      "example": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "x_base"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2021-07-16T14:32:48.771734Z"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "accepted"
+                    },
+                    "memo": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "memo_text": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "fee": {
+                      "type": "integer",
+                      "example": 1000000
+                    },
+                    "inputs": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
+                          "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
+                          "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                          "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                          "type": "transfer",
+                          "index": 1,
+                          "locktime": 0,
+                          "threshold": 1,
+                          "amount": 246420423888,
+                          "group": 0,
+                          "addresses": [
+                            "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
+                          ],
+                          "stake": false,
+                          "reward": false,
+                          "spent": true,
+                          "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                        }
+                      ]
+                    },
+                    "input_amounts": {
+                      "type": "object",
+                      "example": {
+                        "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
+                      }
+                    },
+                    "outputs": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                          "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                          "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                          "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                          "type": "transfer",
+                          "index": 0,
+                          "locktime": 0,
+                          "threshold": 1,
+                          "amount": 31300000000,
+                          "group": 0,
+                          "addresses": [
+                            "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                          ],
+                          "stake": false,
+                          "reward": false,
+                          "spent": false,
+                          "spent_in_tx": null
+                        },
+                        {
+                          "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
+                          "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                          "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                          "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                          "type": "transfer",
+                          "index": 1,
+                          "locktime": 0,
+                          "threshold": 1,
+                          "amount": 215119423888,
+                          "group": 0,
+                          "addresses": [
+                            "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
+                          ],
+                          "stake": false,
+                          "reward": false,
+                          "spent": false,
+                          "spent_in_tx": null
+                        }
+                      ]
+                    },
+                    "output_amounts": {
+                      "type": "object",
+                      "example": {
+                        "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                  "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                  "type": "x_base",
+                  "timestamp": "2021-07-16T14:32:48.771734Z",
+                  "status": "accepted",
+                  "memo": "",
+                  "memo_text": "",
+                  "fee": 1000000,
+                  "inputs": [
+                    {
+                      "id": "nSCo2w1evTnkrcDxNb83jckhgeqhU3ZmSj9TmKXHG8snYU9x6",
+                      "tx_id": "mTgA8QRDc4fj9vgUz7WmrHuQyewVWFA8WSMq8gDmS8YyhMYB5",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 1,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 246420423888,
+                      "group": 0,
+                      "addresses": [
+                        "avax1g62yztrg7nu6ml0gxvcn8c29ease7yqz9u5skq"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": true,
+                      "spent_in_tx": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                    }
+                  ],
+                  "input_amounts": {
+                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246420423888
+                  },
+                  "outputs": [
+                    {
+                      "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 0,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 31300000000,
+                      "group": 0,
+                      "addresses": [
+                        "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": false,
+                      "spent_in_tx": null
+                    },
+                    {
+                      "id": "X9UXxDPRxt3aKFrNKX3cr2nzHktuJyHFxeBZtNbShUhdfFKqn",
+                      "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                      "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                      "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                      "type": "transfer",
+                      "index": 1,
+                      "locktime": 0,
+                      "threshold": 1,
+                      "amount": 215119423888,
+                      "group": 0,
+                      "addresses": [
+                        "avax1g0k7j58h5u3kwgjnw6zxc4su7cvk4zcelf35d8"
+                      ],
+                      "stake": false,
+                      "reward": false,
+                      "spent": false,
+                      "spent_in_tx": null
+                    }
+                  ],
+                  "output_amounts": {
+                    "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z": 246419423888
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "record not found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                },
+                "example": {
+                  "error": "record not found",
+                  "status": 404
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "get--transactions-:id"
+      }
+    },
+    "/transaction_outputs/:id": {
+      "get": {
+        "summary": "Transaction output details ",
+        "description": "\n\nReturns transaction output details for a given ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Transaction output ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX"
+                    },
+                    "tx_id": {
+                      "type": "string",
+                      "example": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq"
+                    },
+                    "chain": {
+                      "type": "string",
+                      "example": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM"
+                    },
+                    "asset": {
+                      "type": "string",
+                      "example": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "transfer"
+                    },
+                    "index": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "locktime": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "threshold": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "example": 31300000000
+                    },
+                    "group": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "addresses": {
+                      "type": "array",
+                      "example": [
+                        "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                      ]
+                    },
+                    "stake": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "reward": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "spent": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "spent_in_tx": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                },
+                "example": {
+                  "id": "TxTjdRFsFX7FoTqGKytASi576Lv47qSt6xn7B2KA9Df7LkYYX",
+                  "tx_id": "62RFqPfHP56tgxByVwp7JeM7uQkBouFyFpwNYxC2KZ2cw1Zxq",
+                  "chain": "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                  "asset": "FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z",
+                  "type": "transfer",
+                  "index": 0,
+                  "locktime": 0,
+                  "threshold": 1,
+                  "amount": 31300000000,
+                  "group": 0,
+                  "addresses": [
+                    "avax1dsftd8yed98h2t6l2ymex0df7jq3naj5y54g7e"
+                  ],
+                  "stake": false,
+                  "reward": false,
+                  "spent": false,
+                  "spent_in_tx": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "record not found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                },
+                "example": {
+                  "error": "record not found",
+                  "status": 404
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "get--transaction_outputs-:id"
+      }
+    },
+    "/transaction_types": {
+      "get": {
+        "summary": "Transaction type stats ",
+        "description": "\n\nReturns available transaction types and their counts",
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "c_evm"
+                      },
+                      "total_count": {
+                        "type": "integer",
+                        "example": 3373474
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "type": "c_evm",
+                  "total_count": 3373474
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "get--transaction_types"
+      }
+    }
+  }
+}
