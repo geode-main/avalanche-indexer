@@ -17,7 +17,7 @@ func prepareAddValidatorTx(tx *platformvm.UnsignedAddValidatorTx) (*model.Transa
 	transaction := &model.Transaction{
 		ID:       tx.ID().String(),
 		Type:     model.TxTypeAddValidator,
-		Metadata: makeValidatorMetadata(tx.Validator),
+		Metadata: makeStakingMetadata(tx.Validator),
 	}
 	transaction.SetRawMemo(tx.Memo)
 	transaction.Metadata["validator_commission_rate"] = tx.Shares / 10000
@@ -56,7 +56,7 @@ func prepareAddDelegatorTx(tx *platformvm.UnsignedAddDelegatorTx) (*model.Transa
 	transaction := &model.Transaction{
 		ID:       tx.ID().String(),
 		Type:     model.TxTypeAddDelegator,
-		Metadata: makeValidatorMetadata(tx.Validator),
+		Metadata: makeStakingMetadata(tx.Validator),
 	}
 	transaction.SetRawMemo(tx.Memo)
 
@@ -208,13 +208,13 @@ func updateTransactionTotals(tx *model.Transaction, avaxAssetID string) {
 	tx.Fee = fee
 }
 
-func makeValidatorMetadata(validator platformvm.Validator) types.Map {
+func makeStakingMetadata(validator platformvm.Validator) types.Map {
 	return types.Map{
-		"validator_node_id":    validator.NodeID.String(),
-		"validator_start_time": validator.StartTime().UTC().Format(time.RFC3339),
-		"validator_end_time":   validator.EndTime().UTC().Format(time.RFC3339),
-		"validator_duration":   validator.EndTime().Unix() - validator.StartTime().Unix(),
-		"validator_weight":     validator.Weight(),
+		"node_id":    validator.NodeID.String(),
+		"start_time": validator.StartTime().UTC().Format(time.RFC3339),
+		"end_time":   validator.EndTime().UTC().Format(time.RFC3339),
+		"duration":   validator.EndTime().Unix() - validator.StartTime().Unix(),
+		"weight":     validator.Weight(),
 	}
 }
 
