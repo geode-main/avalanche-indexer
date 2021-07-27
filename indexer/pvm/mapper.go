@@ -20,7 +20,7 @@ func prepareAddValidatorTx(tx *platformvm.UnsignedAddValidatorTx) (*model.Transa
 		Metadata: makeStakingMetadata(tx.Validator),
 	}
 	transaction.SetRawMemo(tx.Memo)
-	transaction.Metadata["validator_commission_rate"] = tx.Shares / 10000
+	transaction.Metadata["commission_rate"] = tx.Shares / 10000
 
 	_, err := setTxInsOuts(transaction, tx.BaseTx.ID(), tx.Ins, append(tx.Outs, tx.Stake...))
 	if err != nil {
