@@ -177,6 +177,32 @@ func (w Worker) initEvent(block *model.Block, tx *model.Transaction) *model.Even
 	}
 }
 
+func (w Worker) initCommissionChangeEvent(block *model.Block, tx *model.Transaction, current *model.Event, prev *model.Event) *model.Event {
+	if current.Type != prev.Type {
+		return nil
+	}
+
+	beforeVal := prev.Data.GetInt("commission_rate")
+	afterVal := current.Data.GetInt("commission_rate")
+
+	if afterVal == beforeVal {
+		return nil
+	}
+
+	commEvent := w.initEvent(block, tx)
+	commEvent.Scope = current.Scope
+	commEvent.Type = model.EventTypeValidatorCommissionChanged
+	commEvent.ItemID = current.ItemID
+	commEvent.ItemType = current.ItemType
+
+	commEvent.Data = types.NewMap()
+	commEvent.Data["before"] = beforeVal
+	commEvent.Data["after"] = afterVal
+	commEvent.Data["change"] = afterVal - beforeVal
+
+	return commEvent
+}
+
 func (w Worker) createAddValidatorEvent(block *model.Block, tx *model.Transaction) error {
 	if block.Type != model.BlockTypeCommit {
 		return nil
@@ -201,25 +227,8 @@ func (w Worker) createAddValidatorEvent(block *model.Block, tx *model.Transactio
 	}
 
 	var commEvent *model.Event
-
 	if len(recentEvents) > 0 {
-		prev := recentEvents[0]
-
-		beforeVal := prev.Data.GetInt("commission_rate")
-		afterVal := event.Data.GetInt("commission_rate")
-
-		if afterVal != beforeVal {
-			commEvent = w.initEvent(block, tx)
-			commEvent.Scope = event.Scope
-			commEvent.Type = model.EventTypeValidatorCommissionChanged
-			commEvent.ItemID = event.ItemID
-			commEvent.ItemType = event.ItemType
-
-			commEvent.Data = types.NewMap()
-			commEvent.Data["before"] = beforeVal
-			commEvent.Data["after"] = afterVal
-			commEvent.Data["change"] = afterVal - beforeVal
-		}
+		commEvent = w.initCommissionChangeEvent(block, tx, event, &recentEvents[0])
 	}
 
 	err = w.createEvent(event)
