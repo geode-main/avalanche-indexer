@@ -44,3 +44,7 @@ func AvalancheID(data []byte) (string, error) {
 	}
 	return id.String(), nil
 }
+
+func AvalancheIDFromString(data string) (string, error) {
+	return AvalancheID([]byte(data))
+}

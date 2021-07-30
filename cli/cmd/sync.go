@@ -9,6 +9,7 @@ import (
 	"github.com/figment-networks/avalanche-indexer/client"
 	"github.com/figment-networks/avalanche-indexer/indexer"
 	"github.com/figment-networks/avalanche-indexer/indexer/avm"
+	"github.com/figment-networks/avalanche-indexer/indexer/blocks"
 	"github.com/figment-networks/avalanche-indexer/indexer/codec"
 	"github.com/figment-networks/avalanche-indexer/indexer/cvm"
 	"github.com/figment-networks/avalanche-indexer/indexer/pvm"
@@ -92,6 +93,7 @@ func (cmd SyncCommand) Run() error {
 	avmWorker := avm.NewWorker(&cmd.rpc.Index, cmd.db, codec.AVM, xID, assetID.String())
 	pvmWorker := pvm.NewWorker(&cmd.rpc.Index, cmd.db, codec.PVM, pID, assetID.String())
 	cvmWorker := cvm.NewWorker(cmd.db, codec.EVM, &cmd.rpc.Index, &cmd.rpc.Evm, cID, assetID.String(), big.NewInt(int64(cmd.evmChainID)))
+	pblocksWorker := blocks.NewWorker(cmd.db, cmd.rpc, cmd.logger, pID)
 
 	if err = avmWorker.Run(); err != nil {
 		return err
@@ -102,6 +104,10 @@ func (cmd SyncCommand) Run() error {
 	}
 
 	if err = cvmWorker.Run(); err != nil {
+		return err
+	}
+
+	if pblocksWorker.Run(); err != nil {
 		return err
 	}
 

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -38,6 +39,13 @@ func (s *PlatformStore) GetChain(chainID string) (*model.Chain, error) {
 	return chain, checkErr(err)
 }
 
+// GetChain returns a single chain record by name
+func (s *PlatformStore) GetChainByName(name string) (*model.Chain, error) {
+	chain := &model.Chain{}
+	err := s.Model(chain).First(chain, "name = ?", name).Error
+	return chain, checkErr(err)
+}
+
 // CreateChain creates a new chain record
 func (s *PlatformStore) CreateChain(chain *model.Chain) error {
 	err := s.
@@ -67,7 +75,7 @@ func (s *PlatformStore) GetBlocks(search *BlocksSearch) ([]model.Block, error) {
 		Where("chain = ?", search.Chain)
 
 	if search.StartHeight > 0 {
-		scope = scope.Where("height >= ?", search.StartHeight-1)
+		scope = scope.Where("height >= ?", search.StartHeight)
 	}
 
 	if search.EndHeight > 0 {
@@ -75,7 +83,8 @@ func (s *PlatformStore) GetBlocks(search *BlocksSearch) ([]model.Block, error) {
 	}
 
 	if search.Type != "" {
-		scope = scope.Where("type = ?", search.Type)
+		types := strings.Split(search.Type, ",")
+		scope = scope.Where("type IN (?)", types)
 	}
 
 	switch search.Order {
@@ -89,6 +98,20 @@ func (s *PlatformStore) GetBlocks(search *BlocksSearch) ([]model.Block, error) {
 	err := scope.Limit(search.Limit).Find(&result).Error
 
 	return result, err
+}
+
+// LastBlock returns a block for the latest height
+func (s *PlatformStore) LastBlock(chain string) (*model.Block, error) {
+	result := &model.Block{}
+
+	err := s.
+		Model(result).
+		Where("chain = ?", chain).
+		Order("height DESC").
+		First(result).
+		Error
+
+	return result, checkErr(err)
 }
 
 // CreateBlock creates a new block

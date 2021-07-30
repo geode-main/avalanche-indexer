@@ -66,6 +66,8 @@ func (s *Server) setupRoutes() {
 	s.addRoute(http.MethodGet, "/transactions/:id", "Get transaction details", s.handleTransaction)
 	s.addRoute(http.MethodGet, "/transaction_outputs/:id", "Get transaction output", s.handleTransactionOutput)
 	s.addRoute(http.MethodGet, "/transaction_types", "Get transaction types", s.handleTransactionTypeCounts)
+	s.addRoute(http.MethodGet, "/events", "Events search", s.handleEvents)
+	s.addRoute(http.MethodGet, "/events/:id", "Event details", s.handleEvent)
 }
 
 func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
@@ -394,4 +396,36 @@ func (s Server) handleBlock(c *gin.Context) {
 	}
 
 	jsonOk(c, block)
+}
+
+// handleEvents renders events matching the search parameters
+func (s Server) handleEvents(c *gin.Context) {
+	input := &store.EventSearchInput{}
+
+	if err := c.Bind(input); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	if err := input.Validate(); err != nil {
+		badRequest(c, err)
+		return
+	}
+
+	events, err := s.db.Events.Search(input)
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, events)
+}
+
+// handleEvent renders a single event details
+func (s Server) handleEvent(c *gin.Context) {
+	event, err := s.db.Events.FindByID(c.Param("id"))
+	if shouldReturn(c, err) {
+		return
+	}
+
+	jsonOk(c, event)
 }

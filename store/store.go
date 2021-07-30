@@ -33,6 +33,7 @@ type DB struct {
 	RawMessages  RawMessagesStore
 	Transactions TransactionsStore
 	Assets       AssetsStore
+	Events       EventsStore
 }
 
 func NewRaw(connStr string) (*gorm.DB, error) {
@@ -88,6 +89,7 @@ func New(connStr string) (*DB, error) {
 		RawMessages:  RawMessagesStore{conn},
 		Transactions: TransactionsStore{conn},
 		Assets:       AssetsStore{conn},
+		Events:       EventsStore{conn},
 	}, nil
 }
 

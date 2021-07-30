@@ -20,7 +20,11 @@ func NewMap() Map {
 }
 
 func (m Map) GetInt(key string) int {
-	val, _ := m[key].(int)
+	return int(m.GetFloat64(key))
+}
+
+func (m Map) GetFloat64(key string) float64 {
+	val, _ := m[key].(float64)
 	return val
 }
 

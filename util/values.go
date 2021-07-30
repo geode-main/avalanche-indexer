@@ -17,3 +17,7 @@ func StringPtr(val string) *string {
 func Uint64Prt(val uint64) *uint64 {
 	return &val
 }
+
+func BoolPtr(val bool) *bool {
+	return &val
+}
