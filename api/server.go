@@ -400,15 +400,8 @@ func (s Server) handleBlock(c *gin.Context) {
 
 // handleEvents renders events matching the search parameters
 func (s Server) handleEvents(c *gin.Context) {
-	input := &store.EventSearchInput{}
-
-	if err := c.Bind(input); err != nil {
-		badRequest(c, err)
-		return
-	}
-
-	if err := input.Validate(); err != nil {
-		badRequest(c, err)
+	input := eventsSearchInput(c)
+	if input == nil {
 		return
 	}
 

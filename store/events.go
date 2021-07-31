@@ -46,6 +46,10 @@ func (s EventsStore) Search(input *EventSearchInput) ([]model.Event, error) {
 	result := []model.Event{}
 	scope := s.Model(&model.Event{})
 
+	if input.Chain != "" {
+		scope = scope.Where("chain = ?", input.Chain)
+	}
+
 	if input.Scope != "" {
 		scope = scope.Where("scope = ?", input.Scope)
 	}
