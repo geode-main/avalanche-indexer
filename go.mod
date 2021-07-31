@@ -16,6 +16,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tuvistavie/securerandom v0.0.0-20140719024926-15512123a948
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.2
 )
