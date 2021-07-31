@@ -108,7 +108,7 @@ func (s *PlatformStore) LastBlock(chain string) (*model.Block, error) {
 		Model(result).
 		Where("chain = ?", chain).
 		Order("height DESC").
-		First(result).
+		Take(result).
 		Error
 
 	return result, checkErr(err)
