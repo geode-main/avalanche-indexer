@@ -1,7 +1,6 @@
 package indexer
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/figment-networks/avalanche-indexer/client"
@@ -80,17 +79,8 @@ func initDelegation(delegator *client.Delegator) (result model.Delegation, err e
 		return result, err
 	}
 
-	// note: avax does not expose internal ID for delegations so we must build one
-	referenceID := fmt.Sprintf(
-		"%s_%s_%v_%v",
-		delegator.NodeID,
-		delegator.RewardOwner.Addresses[0],
-		startTime.Unix(),
-		endTime.Unix(),
-	)
-
 	return model.Delegation{
-		ReferenceID:     util.StringSHA1(referenceID),
+		ReferenceID:     delegator.TxID,
 		NodeID:          delegator.NodeID,
 		StakeAmount:     amount,
 		PotentialReward: reward,

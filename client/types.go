@@ -43,6 +43,7 @@ type MinStakeResponse struct {
 }
 
 type Validator struct {
+	TxID            string      `json:"txID"`
 	StartTime       string      `json:"startTime"`
 	EndTime         string      `json:"endTime"`
 	StakeAmount     string      `json:"stakeAmount"`
@@ -56,6 +57,7 @@ type Validator struct {
 }
 
 type Delegator struct {
+	TxID            string      `json:"txID"`
 	StartTime       string      `json:"startTime"`
 	EndTime         string      `json:"endTime"`
 	StakeAmount     string      `json:"stakeAmount"`
