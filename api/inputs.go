@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/figment-networks/avalanche-indexer/store"
 	"github.com/gin-gonic/gin"
+
+	"github.com/figment-networks/avalanche-indexer/store"
 )
 
 func eventsSearchInput(c *gin.Context) *store.EventSearchInput {
