@@ -3,9 +3,10 @@ package store
 import (
 	"strings"
 
-	"github.com/figment-networks/avalanche-indexer/model"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+
+	"github.com/figment-networks/avalanche-indexer/model"
 )
 
 type EventsStore struct {

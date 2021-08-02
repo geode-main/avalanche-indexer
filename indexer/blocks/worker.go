@@ -98,6 +98,10 @@ func (w *Worker) Run() error {
 		return err
 	}
 	if len(blocks) == 0 {
+		w.log.
+			WithFields(logrus.Fields{"chain": w.chain, "start_height": search.StartHeight}).
+			Debug("no new blocks found")
+
 		return nil
 	}
 
