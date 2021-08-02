@@ -53,6 +53,23 @@ const (
 	// Reward types
 	RewardTypeValidator = "validator"
 	RewardTypeDelegator = "delegator"
+
+	// Event scopes
+	EventScopeStaking = "staking"
+	EventScopeRewards = "rewards"
+	EventScopeNetwork = "network"
+
+	// Event Item Types
+	EventItemTypeValidator = "validator"
+	EventItemTypeDelegator = "delegator"
+
+	// Event types
+	EventTypeValidatorAdded             = "validator_added"
+	EventTypeValidatorFinished          = "validator_finished"
+	EventTypeValidatorCommissionChanged = "validator_commission_changed"
+	EventTypeDelegatorAdded             = "delegator_added"
+	EventTypeDelegatorFinished          = "delegator_finished"
+	EventTypeSubnetValidatorAdded       = "subnet_validator_added"
 )
 
 var (

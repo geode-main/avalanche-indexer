@@ -17,7 +17,12 @@ Please see the sections below for all available methods of installation.
 Clone the repository:
 
 ```bash
-git@github.com:figment-networks/avalanche-indexer.git
+# Setup home directory for source code
+mkdir -p $GOPATH/src/github.com/figment-networks
+cd $GOPATH/src/github.com/figment-networks
+
+# Clone repository
+git clone git@github.com:figment-networks/avalanche-indexer.git
 cd avalanche-indexer
 ```
 
@@ -30,12 +35,14 @@ make setup
 Build the binary:
 
 ```bash
-make
+make build
 ```
 
 ### Binary Releases
 
 See [Github Releases](https://github.com/figment-networks/avalanche-indexer/releases) page for details.
+
+*Please note that only Linux 64bit releases are published to Github*
 
 ### Docker
 
@@ -96,6 +103,18 @@ Example:
 }
 ```
 
+For Fuji (Testnet):
+
+- `network_id`: 5
+- `evm_network_id`: 1
+- `evm_chain_id`: 43113
+
+For Mainnet:
+
+- `network_id`: 1
+- `evm_network_id`: 1
+- `evm_chain_id`: 43114
+
 ## Running Application
 
 Once you have created a database and specified all configuration options, you
@@ -117,7 +136,7 @@ Perform the initial sync:
 avalanche-indexer -config path/to/config.josn -cmd=sync
 ```
 
-If previous steps did not produce any errors you can start the indexer worker:
+If the previous step did not produce any errors, you can start the indexer worker:
 
 ```bash
 avalanche-indexer -config path/to/config.json -cmd=worker
@@ -151,6 +170,8 @@ avalanche-indexer -config path/to/config.json -cmd=server
 | GET    | /transactions/:hash             | Get transaction details by hash
 | GET    | /transaction_outputs/:id        | Get a transaction output details by ID
 | GET    | /transaction_types              | Get a summary of all transcation types
+| GET    | /events                         | Events search
+| GET    | /events/:id                     | Get an individual event details
 
 ## License
 
