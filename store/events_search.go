@@ -29,7 +29,7 @@ func (input *EventSearchInput) Validate() error {
 	}
 
 	if input.ItemType != "" && input.ItemID == "" {
-		return errors.New("item-id parameter is required")
+		return errors.New("item_id parameter is required")
 	}
 
 	if input.StartTime != "" {
