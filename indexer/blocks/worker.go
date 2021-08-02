@@ -260,6 +260,10 @@ func (w Worker) createAddDelegatorEvent(block *model.Block, tx *model.Transactio
 }
 
 func (w Worker) createFinishValidatorEvent(block *model.Block, tx *model.Transaction) error {
+	if tx.ReferenceTxID == nil {
+		return nil
+	}
+
 	refTx, err := w.db.Transactions.GetByID(*tx.ReferenceTxID)
 	if err != nil && err != store.ErrNotFound {
 		return err
