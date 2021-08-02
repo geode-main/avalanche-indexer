@@ -3,6 +3,8 @@ package store
 import (
 	"errors"
 	"time"
+
+	"github.com/figment-networks/avalanche-indexer/model"
 )
 
 type EventSearchInput struct {
@@ -30,6 +32,15 @@ func (input *EventSearchInput) Validate() error {
 
 	if input.ItemType != "" && input.ItemID == "" {
 		return errors.New("item_id parameter is required")
+	}
+
+	if input.ItemType != "" {
+		switch input.ItemType {
+		case model.EventItemTypeValidator:
+		case model.EventItemTypeDelegator:
+		default:
+			return errors.New("invalid item_type value")
+		}
 	}
 
 	if input.StartTime != "" {
