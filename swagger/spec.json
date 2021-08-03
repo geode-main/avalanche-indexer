@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "0.3.0",
+    "version": "0.4.0",
     "title": "Avalanche Indexer API",
     "description": "Avalanche Indexer API provides a series of endpoints for indexed data on Avalanche blockchain",
     "license": {
@@ -1418,30 +1418,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "invalid transaction type: foo"
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  }
-                },
-                "example": {
-                  "error": "invalid transaction type: foo",
-                  "status": 400
-                }
-              }
-            }
-          },
           "200": {
             "description": "Success",
             "content": {
@@ -1644,6 +1620,30 @@
                     }
                   }
                 ]
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid transaction type: foo"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                },
+                "example": {
+                  "error": "invalid transaction type: foo",
+                  "status": 400
+                }
               }
             }
           }
@@ -2081,6 +2081,334 @@
           "Transactions"
         ],
         "operationId": "get--transaction_types"
+      }
+    },
+    "/events": {
+      "get": {
+        "summary": "Events search ",
+        "description": "\n\nReturns blockchain events matching the search parameters",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chain",
+            "required": false,
+            "description": "Filter by chain ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "description": "Filter by scope. Currently only staking is supported.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "staking"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Filter by event type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "validator_added",
+                "validator_finished",
+                "validator_commission_changed",
+                "delegator_added",
+                "delegator_finished"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "item_id",
+            "required": false,
+            "description": "Filter by item ID. Item type parameter is also required.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "item_type",
+            "required": false,
+            "description": "Filter by item type. Item ID is also required.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "validator",
+                "delegator"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_time",
+            "required": false,
+            "description": "Search range start time. Supports `YYYY-MM-DD` and RFC3339 formats.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_time",
+            "required": false,
+            "description": "Search range end time. Supports `YYYY-MM-DD` and RFC3339 formats.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_height",
+            "required": false,
+            "description": "Search range start block height (if applicable).",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_height",
+            "required": false,
+            "description": "Search range start block height (if applicable).",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Results page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Number of results to return.",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                100
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "2tm1x7EPpvCqDTEUNFDFGQgE2anScjtmz5Zbhx1i6uMa9osHVo"
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "delegator_finished"
+                      },
+                      "scope": {
+                        "type": "string",
+                        "example": "staking"
+                      },
+                      "chain": {
+                        "type": "string",
+                        "example": "11111111111111111111111111111111LpoYY"
+                      },
+                      "block": {
+                        "type": "string",
+                        "example": "pVRYPW7Pwb8fZUaPRS4RWgSyufhejuAZCsqFMPeH674CxxEvV"
+                      },
+                      "block_height": {
+                        "type": "integer",
+                        "example": 676168
+                      },
+                      "tx_hash": {
+                        "type": "string",
+                        "example": "2pS1SHasd1wB9NHnqjfrkzhaL4q7NmswdTrQ9h1KFmmE7ihCCg"
+                      },
+                      "item_id": {
+                        "type": "string",
+                        "example": "6yAy6J1h254tcp4fxHXpJYEtn6GUd48o3"
+                      },
+                      "item_type": {
+                        "type": "string",
+                        "example": "validator"
+                      },
+                      "timestamp": {
+                        "type": "string",
+                        "example": "2021-08-03T17:30:15.370608Z"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                          "rewarded": true
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "id": "2tm1x7EPpvCqDTEUNFDFGQgE2anScjtmz5Zbhx1i6uMa9osHVo",
+                    "type": "delegator_finished",
+                    "scope": "staking",
+                    "chain": "11111111111111111111111111111111LpoYY",
+                    "block": "pVRYPW7Pwb8fZUaPRS4RWgSyufhejuAZCsqFMPeH674CxxEvV",
+                    "block_height": 676168,
+                    "tx_hash": "2pS1SHasd1wB9NHnqjfrkzhaL4q7NmswdTrQ9h1KFmmE7ihCCg",
+                    "item_id": "6yAy6J1h254tcp4fxHXpJYEtn6GUd48o3",
+                    "item_type": "validator",
+                    "timestamp": "2021-08-03T17:30:15.370608Z",
+                    "data": {
+                      "rewarded": true
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "Events"
+        ],
+        "operationId": "get--events"
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "summary": "Event details ",
+        "description": "\n\nReturns a single event record by ID",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "2Nx1jHZBAxqPZB9BxdJmpEZ7HMQtrn1mtX8nCNrKrQFCqCYy6j"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "validator_added"
+                    },
+                    "scope": {
+                      "type": "string",
+                      "example": "staking"
+                    },
+                    "chain": {
+                      "type": "string",
+                      "example": "11111111111111111111111111111111LpoYY"
+                    },
+                    "block": {
+                      "type": "string",
+                      "example": "2QFgBuQanqBEj7v6MMwsLTHekWmfvvpQ7mG4k7RT8We6ZYdjBQ"
+                    },
+                    "block_height": {
+                      "type": "integer",
+                      "example": 676130
+                    },
+                    "tx_hash": {
+                      "type": "string",
+                      "example": "25AV3W9j4YX4FYEN59s1VugKFmS2N5RmEYxjTjC7Rpg7ECG8bx"
+                    },
+                    "item_id": {
+                      "type": "string",
+                      "example": "4WXSGK6dYs65hn6Wp6EN6d5UspifqAeFk"
+                    },
+                    "item_type": {
+                      "type": "string",
+                      "example": "validator"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2021-08-03T16:57:57.963681Z"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                        "commission_rate": "2",
+                        "duration": "4496395",
+                        "end_time": "2021-09-24T18:02:51Z",
+                        "node_id": "4WXSGK6dYs65hn6Wp6EN6d5UspifqAeFk",
+                        "start_time": "2021-08-03T17:02:56Z",
+                        "weight": "2063429484002"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "id": "2Nx1jHZBAxqPZB9BxdJmpEZ7HMQtrn1mtX8nCNrKrQFCqCYy6j",
+                  "type": "validator_added",
+                  "scope": "staking",
+                  "chain": "11111111111111111111111111111111LpoYY",
+                  "block": "2QFgBuQanqBEj7v6MMwsLTHekWmfvvpQ7mG4k7RT8We6ZYdjBQ",
+                  "block_height": 676130,
+                  "tx_hash": "25AV3W9j4YX4FYEN59s1VugKFmS2N5RmEYxjTjC7Rpg7ECG8bx",
+                  "item_id": "4WXSGK6dYs65hn6Wp6EN6d5UspifqAeFk",
+                  "item_type": "validator",
+                  "timestamp": "2021-08-03T16:57:57.963681Z",
+                  "data": {
+                    "commission_rate": "2",
+                    "duration": "4496395",
+                    "end_time": "2021-09-24T18:02:51Z",
+                    "node_id": "4WXSGK6dYs65hn6Wp6EN6d5UspifqAeFk",
+                    "start_time": "2021-08-03T17:02:56Z",
+                    "weight": "2063429484002"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "record not found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                },
+                "example": {
+                  "error": "record not found",
+                  "status": 404
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Events"
+        ],
+        "operationId": "get--events-id"
       }
     }
   }
