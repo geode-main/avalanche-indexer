@@ -150,6 +150,9 @@ avalanche-indexer -config path/to/config.json -cmd=server
 
 ## API Reference
 
+Visit [API reference](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/figment-networks/avalanche-indexer/main/swagger/spec.json) page
+to view detailed responses.
+
 | Method | Path                            | Description
 |--------|---------------------------------|------------------------------------
 | GET    | /health                         | Healthcheck endpoint
