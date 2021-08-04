@@ -49,7 +49,7 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 	}
 
 	if input.Memo != "" {
-		scope = scope.Where("memo_text @@ to_tsquery(?)", input.Memo)
+		scope = scope.Where("memo_tsv @@ to_tsquery('english', ?::text)", input.Memo)
 	}
 
 	if input.BlockHash != "" {
