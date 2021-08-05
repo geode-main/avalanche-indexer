@@ -49,7 +49,10 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 	}
 
 	if input.Memo != "" {
-		scope = scope.Where("memo_tsv @@ to_tsquery('english', ?::text)", input.Memo)
+		words := strings.Split(strings.TrimSpace(input.Memo), " ")
+		for _, word := range words {
+			scope = scope.Where("memo_tsv @@ to_tsquery('english', ?::text)", word)
+		}
 	}
 
 	if input.BlockHash != "" {
