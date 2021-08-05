@@ -52,11 +52,11 @@ func (input *TxSearchInput) Validate() error {
 	}
 
 	if input.Page > 0 && input.Offset == 0 {
-		input.Offset = input.Page * input.Limit
+		input.Offset = (input.Page - 1) * input.Limit
 	}
 
 	if input.StartTime != "" {
-		ts, err := parseTimeFilter(input.StartTime)
+		ts, err := parseTimeFilter(input.StartTime, "bod")
 		if err != nil {
 			return errors.New("invalid start time")
 		}
@@ -64,9 +64,12 @@ func (input *TxSearchInput) Validate() error {
 	}
 
 	if input.EndTime != "" {
-		ts, err := parseTimeFilter(input.EndTime)
+		ts, err := parseTimeFilter(input.EndTime, "eod")
 		if err != nil {
 			return errors.New("invalid end time")
+		}
+		if input.startTime != nil && ts.Before(*input.startTime) {
+			return errors.New("end time must be greater than start time")
 		}
 		input.endTime = ts
 	}
@@ -84,7 +87,7 @@ func (input *TxSearchInput) Validate() error {
 	return nil
 }
 
-func parseTimeFilter(input string) (*time.Time, error) {
+func parseTimeFilter(input string, mode string) (*time.Time, error) {
 	if input == "" {
 		return nil, nil
 	}
@@ -94,6 +97,12 @@ func parseTimeFilter(input string) (*time.Time, error) {
 
 	if reDate.MatchString(input) {
 		t, err = time.Parse("2006-01-02", input)
+		if err == nil {
+			switch mode {
+			case "eod":
+				t = time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, t.Location())
+			}
+		}
 	} else if reUnixTime.MatchString(input) {
 		unixTime, err := strconv.Atoi(input)
 		if err != nil {

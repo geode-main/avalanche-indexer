@@ -44,7 +44,7 @@ func (input *EventSearchInput) Validate() error {
 	}
 
 	if input.StartTime != "" {
-		ts, err := parseTimeFilter(input.StartTime)
+		ts, err := parseTimeFilter(input.StartTime, "bod")
 		if err != nil {
 			return errors.New("invalid start time")
 		}
@@ -52,9 +52,12 @@ func (input *EventSearchInput) Validate() error {
 	}
 
 	if input.EndTime != "" {
-		ts, err := parseTimeFilter(input.EndTime)
+		ts, err := parseTimeFilter(input.EndTime, "eod")
 		if err != nil {
 			return errors.New("invalid end time")
+		}
+		if input.startTime != nil && ts.Before(*input.startTime) {
+			return errors.New("end time must be greater than start time")
 		}
 		input.endTime = ts
 	}
@@ -77,7 +80,7 @@ func (input *EventSearchInput) Validate() error {
 		return errors.New("invalid page value")
 	}
 	if input.Page > 0 {
-		input.Offset = input.Limit * input.Page
+		input.Offset = input.Limit * (input.Page - 1)
 	}
 
 	return nil
