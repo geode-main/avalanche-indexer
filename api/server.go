@@ -282,6 +282,12 @@ func (s *Server) handleAddress(c *gin.Context) {
 			return
 		}
 
+		stakedResp, err := s.rpc.Platform.GetStake([]string{"P-" + address})
+		if shouldReturn(c, err) {
+			return
+		}
+		balance.Staked = stakedResp.Staked
+
 		resp, err := s.rpc.Avm.GetAllBalances("X-" + address)
 		if shouldReturn(c, err) {
 			return

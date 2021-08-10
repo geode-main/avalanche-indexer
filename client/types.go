@@ -85,6 +85,7 @@ type Balance struct {
 	Unlocked           string `json:"unlocked"`
 	LockedStakeable    string `json:"lockedStakeable"`
 	LockedNotStakeable string `json:"lockedNotStakeable"`
+	Staked             string `json:"staked"`
 }
 
 type RewardUTXOsResponse struct {
@@ -112,4 +113,8 @@ type AvmBalance struct {
 
 type GetAllBalancesResponse struct {
 	Balances []AvmBalance `json:"balances"`
+}
+
+type GetStakeResponse struct {
+	Staked string `json:"staked"`
 }
