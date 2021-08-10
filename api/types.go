@@ -1,6 +1,7 @@
 package api
 
 import (
+	"math/big"
 	"time"
 
 	"github.com/figment-networks/avalanche-indexer/client"
@@ -28,4 +29,9 @@ type ValidatorResponse struct {
 type AddressBalancesResponse struct {
 	Platform client.Balance      `json:"P"`
 	Exchance []client.AvmBalance `json:"X"`
+}
+
+type CBalanceResponse struct {
+	Balance string   `json:"balance"`
+	Height  *big.Int `json:"height"`
 }

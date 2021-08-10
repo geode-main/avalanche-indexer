@@ -283,9 +283,9 @@ func (s *Server) handleAddress(c *gin.Context) {
 		if shouldReturn(c, err) {
 			return
 		}
-		jsonOk(c, gin.H{
-			"balance": balance.String(),
-			"height":  height,
+		jsonOk(c, CBalanceResponse{
+			Balance: balance.String(),
+			Height:  height,
 		})
 
 	case 'P':
