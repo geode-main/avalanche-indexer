@@ -277,7 +277,20 @@ func (s *Server) handleAddress(c *gin.Context) {
 		}
 		jsonOk(c, resp.Balances)
 	default:
-		jsonError(c, 400, "Invalid address")
+		balance, err := s.rpc.Platform.GetBalance("P-" + address)
+		if shouldReturn(c, err) {
+			return
+		}
+
+		resp, err := s.rpc.Avm.GetAllBalances("X-" + address)
+		if shouldReturn(c, err) {
+			return
+		}
+
+		jsonOk(c, AddressBalancesResponse{
+			Platform: *balance,
+			Exchance: resp.Balances,
+		})
 	}
 }
 
