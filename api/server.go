@@ -1,10 +1,13 @@
 package api
 
 import (
+	"context"
 	"fmt"
+	"math/big"
 	"net/http"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 
@@ -264,18 +267,41 @@ func (s *Server) handleAddress(c *gin.Context) {
 	address := c.Param("id")
 
 	switch address[0] {
+	case '0': // 0x.... address format
+		var height *big.Int
+
+		if heighVal := c.Query("height"); heighVal != "" {
+			height = big.NewInt(0)
+			_, ok := height.SetString(heighVal, 10)
+			if !ok {
+				badRequest(c, "invalid height value")
+				return
+			}
+		}
+
+		balance, err := s.rpc.Evm.BalanceAt(context.Background(), common.HexToAddress(address), height)
+		if shouldReturn(c, err) {
+			return
+		}
+		jsonOk(c, gin.H{
+			"balance": balance.String(),
+			"height":  height,
+		})
+
 	case 'P':
 		balance, err := s.rpc.Platform.GetBalance(address)
 		if shouldReturn(c, err) {
 			return
 		}
 		jsonOk(c, balance)
+
 	case 'X':
 		resp, err := s.rpc.Avm.GetAllBalances(address)
 		if shouldReturn(c, err) {
 			return
 		}
 		jsonOk(c, resp.Balances)
+
 	default:
 		balance, err := s.rpc.Platform.GetBalance("P-" + address)
 		if shouldReturn(c, err) {
