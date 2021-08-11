@@ -1,8 +1,10 @@
 package api
 
 import (
+	"math/big"
 	"time"
 
+	"github.com/figment-networks/avalanche-indexer/client"
 	"github.com/figment-networks/avalanche-indexer/model"
 )
 
@@ -22,4 +24,14 @@ type ValidatorResponse struct {
 	Delegations []model.Delegation    `json:"delegations"`
 	HourlyStats []model.ValidatorStat `json:"stats_24h"`
 	DailyStats  []model.ValidatorStat `json:"stats_30d"`
+}
+
+type AddressBalancesResponse struct {
+	Platform client.Balance      `json:"P"`
+	Exchance []client.AvmBalance `json:"X"`
+}
+
+type CBalanceResponse struct {
+	Balance string   `json:"balance"`
+	Height  *big.Int `json:"height"`
 }

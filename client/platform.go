@@ -29,6 +29,11 @@ func (c PlatformClient) GetMinStake() (resp *MinStakeResponse, err error) {
 	return
 }
 
+func (c PlatformClient) GetStake(addresses []string) (resp *GetStakeResponse, err error) {
+	err = c.call("platform.getStake", map[string]interface{}{"addresses": addresses}, &resp)
+	return
+}
+
 func (c PlatformClient) GetBlockchains() (resp *BlockchainsResponse, err error) {
 	err = c.call("platform.getBlockchains", nil, &resp)
 	return
