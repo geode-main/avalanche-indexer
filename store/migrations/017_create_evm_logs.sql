@@ -17,5 +17,5 @@ CREATE TABLE evm_logs (
 );
 
 -- +goose Down
-DROP TABLE evm_receipts;
-DROP TABLE evm_logs;
+DROP TABLE IF EXISTS evm_receipts;
+DROP TABLE IF EXISTS evm_logs;

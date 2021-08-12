@@ -86,6 +86,15 @@ func (input *TxSearchInput) Validate() error {
 		}
 	}
 
+	switch input.Order {
+	case "":
+		input.Order = "time_desc"
+	case "time_asc":
+	case "time_desc":
+	case "height_asc":
+	case "height_desc":
+	}
+
 	return nil
 }
 

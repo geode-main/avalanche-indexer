@@ -20,14 +20,23 @@ type TransactionsStore struct {
 }
 
 // Search returns transactions matching search input
-func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, error) {
+func (store TransactionsStore) Search(input *TxSearchInput) (*TxSearchOutput, error) {
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
 
-	scope := store.
-		Model(&model.Transaction{}).
-		Order("transactions.timestamp DESC")
+	scope := store.Model(&model.Transaction{})
+
+	switch input.Order {
+	case "time_asc":
+		scope = scope.Order("transactions.timestamp ASC")
+	case "time_desc":
+		scope = scope.Order("transactions.timestamp DESC")
+	case "height_asc":
+		scope = scope.Order("transactions.block_height ASC")
+	case "height_desc":
+		scope = scope.Order("transactions.block_height DESC")
+	}
 
 	if input.startTime != nil {
 		scope = scope.Where("transactions.timestamp >= ?", input.startTime)
@@ -38,6 +47,9 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 
 	if input.StartHeight > 0 {
 		scope = scope.Where("transactions.block_height >= ?", input.StartHeight)
+	}
+	if input.EndHeight > 0 {
+		scope = scope.Where("transactions.block_height <= ?", input.EndHeight)
 	}
 
 	if input.Chain != "" {
@@ -109,8 +121,14 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 
 	inputs := []model.Output{}
 	outputs := []model.Output{}
+	shouldLoadOutputs := true
 
-	if len(txIDs) > 0 {
+	// Skip loading UTXOs if we're only searching for EVM transactions
+	if len(input.types) == 1 && input.types[0] == model.TxTypeEvm {
+		shouldLoadOutputs = false
+	}
+
+	if len(txIDs) > 0 && shouldLoadOutputs {
 		if err := store.Model(&model.Output{}).Where("spent_tx_id IN (?)", txIDs).Find(&inputs).Error; err != nil {
 			return nil, err
 		}
@@ -120,20 +138,22 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 		}
 	}
 
-	for idx, tx := range transactions {
-		for _, input := range inputs {
-			if *input.SpentTxID == tx.ID {
-				transactions[idx].Inputs = append(transactions[idx].Inputs, input)
+	if shouldLoadOutputs {
+		for idx, tx := range transactions {
+			for _, input := range inputs {
+				if *input.SpentTxID == tx.ID {
+					transactions[idx].Inputs = append(transactions[idx].Inputs, input)
+				}
 			}
-		}
 
-		for _, output := range outputs {
-			if output.TxID == tx.ID {
-				transactions[idx].Outputs = append(transactions[idx].Outputs, output)
+			for _, output := range outputs {
+				if output.TxID == tx.ID {
+					transactions[idx].Outputs = append(transactions[idx].Outputs, output)
+				}
 			}
-		}
 
-		transactions[idx].UpdateAmounts()
+			transactions[idx].UpdateAmounts()
+		}
 	}
 
 	return &TxSearchOutput{Transactions: transactions}, nil

@@ -35,6 +35,10 @@ func initRPC(endpoint string, prefix string) rpc {
 	}
 }
 
+func (c rpc) Endpoint() string {
+	return c.endpoint
+}
+
 func (c rpc) callRaw(url string, method string, args interface{}) ([]byte, error) {
 	data, err := json2.EncodeClientRequest(method, args)
 	if err != nil {

@@ -12,6 +12,7 @@ import (
 	"github.com/figment-networks/avalanche-indexer/indexer/blocks"
 	"github.com/figment-networks/avalanche-indexer/indexer/codec"
 	"github.com/figment-networks/avalanche-indexer/indexer/cvm"
+	"github.com/figment-networks/avalanche-indexer/indexer/evm"
 	"github.com/figment-networks/avalanche-indexer/indexer/pvm"
 	"github.com/figment-networks/avalanche-indexer/model"
 	"github.com/figment-networks/avalanche-indexer/store"
@@ -94,11 +95,13 @@ func (cmd SyncCommand) Run() error {
 	pvmWorker := pvm.NewWorker(&cmd.rpc.Index, cmd.db, codec.PVM, pID, assetID.String())
 	cvmWorker := cvm.NewWorker(cmd.db, codec.EVM, &cmd.rpc.Index, &cmd.rpc.Evm, cID, assetID.String(), big.NewInt(int64(cmd.evmChainID)))
 	pblocksWorker := blocks.NewWorker(cmd.db, cmd.rpc, cmd.logger, pID)
+	evmWorker := evm.NewWorker(cmd.db, cmd.rpc, cmd.logger, cID)
 
 	return runChain(
 		avmWorker.Run,
 		pvmWorker.Run,
 		cvmWorker.Run,
+		evmWorker.Run,
 		pblocksWorker.Run,
 	)
 }

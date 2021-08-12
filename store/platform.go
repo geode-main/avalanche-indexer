@@ -266,3 +266,38 @@ func (s *PlatformStore) GetSyncStatuses() ([]model.SyncStatus, error) {
 	err := s.Model(&model.SyncStatus{}).Order("id ASC").Find(&result).Error
 	return result, err
 }
+
+// CreateEvmTrace creates a new evm trace record
+func (s *PlatformStore) CreateEvmTrace(trace *model.EvmTrace) error {
+	return s.
+		Model(trace).
+		Clauses(clause.OnConflict{DoNothing: true}).
+		Create(trace).
+		Error
+}
+
+// GetEvmTrace returns the trace record by transaction ID
+func (s *PlatformStore) GetEvmTrace(id string) (*model.EvmTrace, error) {
+	result := &model.EvmTrace{}
+	err := s.Model(result).Where("id = ?", id).Take(result).Error
+	return result, checkErr(err)
+}
+
+// CreateEvmReceipt creates a new receipt record
+func (s PlatformStore) CreateEvmReceipt(receipt *model.EvmReceipt) error {
+	return s.
+		Model(receipt).
+		Clauses(clause.OnConflict{DoNothing: true}).
+		Create(receipt).
+		Error
+}
+
+// GetEvmReceipt returns a receipt record by transaction ID
+func (s *PlatformStore) GetEvmReceipt(txID string) (*model.EvmReceipt, error) {
+	result := &model.EvmReceipt{}
+	err := s.Model(result).Where("id = ?", txID).Take(result).Error
+	if err != nil {
+		result = nil
+	}
+	return result, checkErr(err)
+}
