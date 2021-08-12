@@ -33,6 +33,8 @@ type TxSearchInput struct {
 	StartHeight int    `form:"start_height"`
 	EndHeight   int    `form:"end_height"`
 	BlockHash   string `form:"block_hash"`
+	BeforeID    string `form:"before_id"`
+	AfterID     string `form:"after_id"`
 
 	startTime *time.Time
 	endTime   *time.Time

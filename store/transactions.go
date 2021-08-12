@@ -74,6 +74,22 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 		}
 	}
 
+	if input.BeforeID != "" {
+		beforeTx, err := store.GetShortByID(input.BeforeID)
+		if err != nil {
+			return nil, err
+		}
+		scope = scope.Where("transactions.timestamp < ?", beforeTx.Timestamp)
+	}
+
+	if input.AfterID != "" {
+		afterTx, err := store.GetShortByID(input.AfterID)
+		if err != nil {
+			return nil, err
+		}
+		scope = scope.Where("transactions.timestamp > ?", afterTx.Timestamp)
+	}
+
 	transactions := []model.Transaction{}
 
 	err := scope.
@@ -121,6 +137,13 @@ func (store TransactionsStore) Search(input TxSearchInput) (*TxSearchOutput, err
 	}
 
 	return &TxSearchOutput{Transactions: transactions}, nil
+}
+
+// GetShortByID returns just the transaction record without any extra data
+func (store TransactionsStore) GetShortByID(id string) (*model.Transaction, error) {
+	tx := &model.Transaction{}
+	err := store.Model(tx).Take(tx, "id = ?", id).Error
+	return tx, err
 }
 
 // GetByID returns transaction by ID
