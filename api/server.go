@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -67,10 +68,12 @@ func (s *Server) setupRoutes() {
 	s.addRoute(http.MethodGet, "/transactions", "Transactions search", s.handleTransactions)
 	s.addRoute(http.MethodPost, "/transactions", "Transactions search", s.handleTransactions)
 	s.addRoute(http.MethodGet, "/transactions/:id", "Get transaction details", s.handleTransaction)
+	s.addRoute(http.MethodGet, "/transactions/:id/trace", "Get transaction trace", s.handleTransactionTrace)
 	s.addRoute(http.MethodGet, "/transaction_outputs/:id", "Get transaction output", s.handleTransactionOutput)
 	s.addRoute(http.MethodGet, "/transaction_types", "Get transaction types", s.handleTransactionTypeCounts)
 	s.addRoute(http.MethodGet, "/events", "Events search", s.handleEvents)
 	s.addRoute(http.MethodGet, "/events/:id", "Event details", s.handleEvent)
+
 }
 
 func (s *Server) addRoute(method, path, description string, handlers ...gin.HandlerFunc) {
@@ -328,8 +331,8 @@ func (s *Server) handleAddress(c *gin.Context) {
 
 // handleTransactions performs transactions search
 func (s *Server) handleTransactions(c *gin.Context) {
-	input := store.TxSearchInput{}
-	if err := c.Bind(&input); err != nil {
+	input := &store.TxSearchInput{}
+	if err := c.Bind(input); err != nil {
 		badRequest(c, err)
 		return
 	}
@@ -350,6 +353,43 @@ func (s *Server) handleTransaction(c *gin.Context) {
 		return
 	}
 	jsonOk(c, tx)
+}
+
+// handleTransaction returns EVM trace details for a transaction
+func (s *Server) handleTransactionTrace(c *gin.Context) {
+	resp := TxTraceResponse{}
+
+	trace, err := s.db.Platform.GetEvmTrace(c.Param("id"))
+	if err != nil && err != store.ErrNotFound {
+		serverError(c, err)
+		return
+	}
+	if trace != nil {
+		traceCall := &client.Call{}
+		err = json.Unmarshal([]byte(trace.Data), traceCall)
+		if shouldReturn(c, err) {
+			return
+		}
+		resp.Trace = traceCall
+	}
+
+	receipt, err := s.db.Platform.GetEvmReceipt(c.Param("id"))
+	if err != nil && err != store.ErrNotFound {
+		serverError(c, err)
+		return
+	}
+	if receipt != nil {
+		logs := []model.EvmLog{}
+		err = json.Unmarshal([]byte(receipt.Logs), &logs)
+		if shouldReturn(c, err) {
+			return
+		}
+
+		resp.Receipt = receipt
+		resp.Logs = logs
+	}
+
+	jsonOk(c, resp)
 }
 
 // handleTransactionTypeCounts returns all available transaction typed and associated counts

@@ -106,7 +106,7 @@ func (w *Worker) Run() error {
 	}
 
 	for _, block := range blocks {
-		txResult, err := w.db.Transactions.Search(store.TxSearchInput{
+		txResult, err := w.db.Transactions.Search(&store.TxSearchInput{
 			BlockHash: block.Parent,
 		})
 		if err != nil {

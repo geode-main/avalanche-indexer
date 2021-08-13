@@ -35,3 +35,9 @@ type CBalanceResponse struct {
 	Balance string   `json:"balance"`
 	Height  *big.Int `json:"height"`
 }
+
+type TxTraceResponse struct {
+	Receipt *model.EvmReceipt `json:"receipt"`
+	Logs    []model.EvmLog    `json:"logs"`
+	Trace   *client.Call      `json:"trace"`
+}

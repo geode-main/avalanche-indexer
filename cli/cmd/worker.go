@@ -18,6 +18,7 @@ import (
 	"github.com/figment-networks/avalanche-indexer/indexer/blocks"
 	"github.com/figment-networks/avalanche-indexer/indexer/codec"
 	"github.com/figment-networks/avalanche-indexer/indexer/cvm"
+	"github.com/figment-networks/avalanche-indexer/indexer/evm"
 	"github.com/figment-networks/avalanche-indexer/indexer/pvm"
 	"github.com/figment-networks/avalanche-indexer/model"
 	"github.com/figment-networks/avalanche-indexer/store"
@@ -122,31 +123,16 @@ func (cmd WorkerCommand) startChainWorkers(ctx context.Context) error {
 	pvmWorker := pvm.NewWorker(&cmd.rpc.Index, cmd.db, codec.PVM, pID, assetID.String())
 	cvmWorker := cvm.NewWorker(cmd.db, codec.EVM, &cmd.rpc.Index, &cmd.rpc.Evm, cID, assetID.String(), big.NewInt(int64(cmd.evmChainID)))
 	pblocksWorker := blocks.NewWorker(cmd.db, cmd.rpc, cmd.logger, pID)
+	evmWorker := evm.NewWorker(cmd.db, cmd.rpc, cmd.logger, cID)
 
-	wg := sync.WaitGroup{}
-	wg.Add(4)
-
-	go func() {
-		defer wg.Done()
-		avmWorker.Start(ctx)
-	}()
-
-	go func() {
-		defer wg.Done()
-		pvmWorker.Start(ctx)
-	}()
-
-	go func() {
-		defer wg.Done()
-		cvmWorker.Start(ctx)
-	}()
-
-	go func() {
-		defer wg.Done()
-		pblocksWorker.Start(ctx)
-	}()
-
-	wg.Wait()
+	runWorkerFuncs(
+		ctx,
+		avmWorker.Start,
+		pvmWorker.Start,
+		cvmWorker.Start,
+		evmWorker.Start,
+		pblocksWorker.Start,
+	)
 
 	return nil
 }
@@ -202,4 +188,18 @@ func initSignals() chan os.Signal {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
 	return c
+}
+
+func runWorkerFuncs(ctx context.Context, funcs ...func(context.Context)) {
+	wg := &sync.WaitGroup{}
+	wg.Add(len(funcs))
+
+	for _, fn := range funcs {
+		go func(handler func(context.Context)) {
+			handler(ctx)
+			wg.Done()
+		}(fn)
+	}
+
+	wg.Wait()
 }

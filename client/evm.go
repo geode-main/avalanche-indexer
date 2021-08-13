@@ -25,5 +25,6 @@ func (c *EvmClient) TraceTransaction(ctx context.Context, hash string) (*Call, e
 	if err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }

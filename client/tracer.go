@@ -9,95 +9,109 @@ import (
 )
 
 type Call struct {
-	Type         string         `json:"type"`
-	From         common.Address `json:"from"`
-	To           common.Address `json:"to"`
-	Value        *big.Int       `json:"value"`
-	GasUsed      *big.Int       `json:"gasUsed"`
-	Revert       bool
-	ErrorMessage string  `json:"error"`
-	Calls        []*Call `json:"calls"`
+	Type    string         `json:"type"`
+	From    common.Address `json:"from"`
+	To      common.Address `json:"to"`
+	Value   *hexutil.Big   `json:"value"`
+	Gas     *hexutil.Big   `json:"gas"`
+	GasUsed *hexutil.Big   `json:"gasUsed"`
+	Revert  bool           `json:"revert"`
+	Error   string         `json:"error,omitempty"`
+	Calls   []*Call        `json:"calls"`
+}
+
+type customCall struct {
+	Type    string         `json:"type"`
+	From    common.Address `json:"from"`
+	To      common.Address `json:"to"`
+	Value   *hexutil.Big   `json:"value"`
+	Gas     *hexutil.Big   `json:"gas"`
+	GasUsed *hexutil.Big   `json:"gasUsed"`
+	Revert  bool           `json:"revert"`
+	Error   string         `json:"error"`
+	Calls   []*Call        `json:"calls"`
 }
 
 type FlatCall struct {
-	Type         string         `json:"type"`
-	From         common.Address `json:"from"`
-	To           common.Address `json:"to"`
-	Value        *big.Int       `json:"value"`
-	GasUsed      *big.Int       `json:"gasUsed"`
-	Revert       bool
-	ErrorMessage string `json:"error"`
+	Type    string         `json:"type"`
+	From    common.Address `json:"from"`
+	To      common.Address `json:"to"`
+	Value   *big.Int       `json:"value"`
+	Gas     *big.Int       `json:"gas"`
+	GasUsed *big.Int       `json:"gasUsed"`
+	Revert  bool           `json:"revert"`
+	Error   string         `json:"error"`
 }
 
 func (t *Call) Flatten() *FlatCall {
 	return &FlatCall{
-		Type:         t.Type,
-		From:         t.From,
-		To:           t.To,
-		Value:        t.Value,
-		GasUsed:      t.GasUsed,
-		Revert:       t.Revert,
-		ErrorMessage: t.ErrorMessage,
+		Type:    t.Type,
+		From:    t.From,
+		To:      t.To,
+		Value:   t.Value.ToInt(),
+		Gas:     t.Gas.ToInt(),
+		GasUsed: t.GasUsed.ToInt(),
+		Revert:  t.Revert,
+		Error:   t.Error,
 	}
 }
 
 func (t *Call) UnmarshalJSON(input []byte) error {
-	type CustomTrace struct {
-		Type         string         `json:"type"`
-		From         common.Address `json:"from"`
-		To           common.Address `json:"to"`
-		Value        *hexutil.Big   `json:"value"`
-		GasUsed      *hexutil.Big   `json:"gasUsed"`
-		Revert       bool
-		ErrorMessage string  `json:"error"`
-		Calls        []*Call `json:"calls"`
-	}
-	var dec CustomTrace
-	if err := json.Unmarshal(input, &dec); err != nil {
+	dec := &customCall{}
+	if err := json.Unmarshal(input, dec); err != nil {
 		return err
 	}
 
 	t.Type = dec.Type
 	t.From = dec.From
 	t.To = dec.To
+	t.Error = dec.Error
+	t.Calls = dec.Calls
+
 	if dec.Value != nil {
-		t.Value = (*big.Int)(dec.Value)
+		t.Value = dec.Value
 	} else {
-		t.Value = new(big.Int)
+		t.Value = new(hexutil.Big)
 	}
+
+	if dec.Gas != nil {
+		t.Gas = dec.Gas
+	} else {
+		t.Gas = new(hexutil.Big)
+	}
+
 	if dec.GasUsed != nil {
-		t.GasUsed = (*big.Int)(dec.Value)
+		t.GasUsed = dec.GasUsed
 	} else {
-		t.GasUsed = new(big.Int)
+		t.GasUsed = new(hexutil.Big)
 	}
-	if dec.ErrorMessage != "" {
-		// Any error surfaced by the decoder means that the transaction
-		// has reverted.
+
+	// Any error surfaced by the decoder means that the transaction has reverted.
+	if dec.Error != "" {
 		t.Revert = true
 	}
-	t.ErrorMessage = dec.ErrorMessage
-	t.Calls = dec.Calls
+
 	return nil
 }
 
 func FlattenTraces(data *Call, flattened []*FlatCall) []*FlatCall {
 	results := append(flattened, data.Flatten())
+
 	for _, child := range data.Calls {
-		// Ensure all children of a reverted call
-		// are also reverted!
+		// Ensure all children of a reverted call are also reverted!
 		if data.Revert {
 			child.Revert = true
 
-			// Copy error message from parent
-			// if child does not have one
-			if len(child.ErrorMessage) == 0 {
-				child.ErrorMessage = data.ErrorMessage
+			// Copy error message from parent if child does not have one
+			if len(child.Error) == 0 {
+				child.Error = data.Error
 			}
 		}
 
 		children := FlattenTraces(child, flattened)
 		results = append(results, children...)
 	}
+
 	return results
 }
 

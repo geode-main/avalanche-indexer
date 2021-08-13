@@ -15,7 +15,7 @@ func (SyncStatus) TableName() string {
 }
 
 func (s SyncStatus) AtTip() bool {
-	return s.IndexID == s.TipID
+	return s.IndexID >= s.TipID
 }
 
 func (s SyncStatus) NextID() int64 {
