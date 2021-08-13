@@ -119,7 +119,7 @@ func (w *Worker) Run() error {
 
 	page := 1
 	limit := 100
-	maxConcurrency := 100
+	maxConcurrency := 50
 
 	for {
 		search := store.TxSearchInput{
