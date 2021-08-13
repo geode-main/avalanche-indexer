@@ -292,6 +292,7 @@ func (w Worker) prepareAtomicExportTx(tx *evm.UnsignedExportTx) (*model.Transact
 	for idx, txIn := range tx.Ins {
 		in := model.Output{
 			ID:        tx.ID().Prefix(uint64(idx)).String(),
+			Chain:     transaction.Chain,
 			Type:      model.OutTypeTransfer,
 			TxID:      tx.ID().String(),
 			Index:     uint64(idx),
