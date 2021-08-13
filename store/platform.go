@@ -280,6 +280,9 @@ func (s *PlatformStore) CreateEvmTrace(trace *model.EvmTrace) error {
 func (s *PlatformStore) GetEvmTrace(id string) (*model.EvmTrace, error) {
 	result := &model.EvmTrace{}
 	err := s.Model(result).Where("id = ?", id).Take(result).Error
+	if err != nil {
+		result = nil
+	}
 	return result, checkErr(err)
 }
 

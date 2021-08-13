@@ -364,7 +364,7 @@ func (s *Server) handleTransactionTrace(c *gin.Context) {
 		serverError(c, err)
 		return
 	}
-	if trace.ID != "" {
+	if trace != nil {
 		traceCall := &client.Call{}
 		err = json.Unmarshal([]byte(trace.Data), traceCall)
 		if shouldReturn(c, err) {
@@ -378,7 +378,7 @@ func (s *Server) handleTransactionTrace(c *gin.Context) {
 		serverError(c, err)
 		return
 	}
-	if receipt.ID != "" {
+	if receipt != nil {
 		logs := []model.EvmLog{}
 		err = json.Unmarshal([]byte(receipt.Logs), &logs)
 		if shouldReturn(c, err) {
