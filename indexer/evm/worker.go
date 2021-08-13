@@ -99,19 +99,36 @@ func (w *Worker) Run() error {
 		return nil
 	}
 
-	startHeight := w.status.NextID()
+	blocksSearch := &store.BlocksSearch{
+		Chain:       w.chain,
+		StartHeight: int(w.status.NextID()),
+		Order:       "height_asc",
+	}
+
+	blocks, err := w.db.Platform.GetBlocks(blocksSearch)
+	if err != nil {
+		return err
+	}
+	if len(blocks) == 0 {
+		w.log.
+			WithFields(logrus.Fields{"chain": w.chain, "start_height": blocksSearch.StartHeight}).
+			Debug("no new blocks found")
+
+		return nil
+	}
+
 	page := 1
-	heightRange := 100
+	limit := 100
 	maxConcurrency := 100
 
 	for {
 		search := store.TxSearchInput{
 			Chain:       w.chain,
 			Type:        model.TxTypeEvm,
-			StartHeight: int(startHeight),
-			EndHeight:   int(startHeight) + heightRange,
+			StartHeight: int(blocks[0].Height),
+			EndHeight:   int(blocks[len(blocks)-1].Height),
 			Order:       "height_asc",
-			Limit:       heightRange,
+			Limit:       limit,
 			Page:        page,
 		}
 
@@ -119,7 +136,11 @@ func (w *Worker) Run() error {
 		if err != nil {
 			return err
 		}
+
+		// No more transactions for current height range, update sync status.
 		if len(txSearch.Transactions) == 0 {
+			w.status.IndexID = int64(search.EndHeight)
+			w.status.IndexTime = time.Now()
 			break
 		}
 
@@ -131,6 +152,7 @@ func (w *Worker) Run() error {
 			txIDS[idx] = tx.ID
 		}
 
+		// Perform transaction receipt and trace fetches in parallel.
 		doConcurrently(txIDS, maxConcurrency, func(txID string) {
 			data := fetchData{}
 			w.fetchTxData(txID, &data)
