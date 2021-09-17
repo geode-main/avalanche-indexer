@@ -59,7 +59,7 @@ func NewWorker(
 		evmClient:   evmClient,
 		log:         logrus.StandardLogger(),
 		ethChainID:  ethChainID,
-		ethSigner:   corethTypes.NewEIP155Signer(ethChainID),
+		ethSigner:   corethTypes.LatestSignerForChainID(ethChainID),
 	}
 }
 
