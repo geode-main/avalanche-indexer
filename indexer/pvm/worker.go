@@ -227,7 +227,7 @@ func (w Worker) buildBlock(data *BlockData, blockType string, blockTime time.Tim
 	data.Block = &model.Block{
 		ID:        data.BlockID,
 		Type:      blockType,
-		Parent:    block.ParentID().String(),
+		Parent:    block.Parent().String(),
 		Height:    block.Height(),
 		Timestamp: blockTime,
 		Chain:     w.chain,

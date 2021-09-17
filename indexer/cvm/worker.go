@@ -59,7 +59,7 @@ func NewWorker(
 		evmClient:   evmClient,
 		log:         logrus.StandardLogger(),
 		ethChainID:  ethChainID,
-		ethSigner:   corethTypes.NewEIP155Signer(ethChainID),
+		ethSigner:   corethTypes.LatestSignerForChainID(ethChainID),
 	}
 }
 
@@ -313,7 +313,7 @@ func (w Worker) prepareAtomicExportTx(tx *evm.UnsignedExportTx) (*model.Transact
 }
 
 func (w Worker) prepareEvmTx(block *corethTypes.Block, ethTx *corethTypes.Transaction) (*model.Transaction, error) {
-	msg, err := ethTx.AsMessage(w.ethSigner)
+	msg, err := ethTx.AsMessage(w.ethSigner, block.Header().BaseFee)
 	if err != nil {
 		return nil, err
 	}
