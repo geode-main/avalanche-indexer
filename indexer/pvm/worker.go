@@ -9,6 +9,7 @@ import (
 	"github.com/ava-labs/avalanchego/codec"
 	"github.com/ava-labs/avalanchego/utils/formatting"
 	"github.com/ava-labs/avalanchego/vms/platformvm"
+	"github.com/ava-labs/avalanchego/vms/proposervm/block"
 	"github.com/sirupsen/logrus"
 
 	"github.com/figment-networks/avalanche-indexer/client"
@@ -136,14 +137,23 @@ func (w Worker) ProcessMessage(message *model.RawMessage) error {
 }
 
 func (w Worker) prepareBlockData(raw []byte, blockTime time.Time) (*BlockData, error) {
-	var genericBlock platformvm.Block
+	var (
+		genericBlock platformvm.Block
+		version      uint16
+		blockID      string
+	)
 
-	version, err := w.codec.Unmarshal(raw, &genericBlock)
+	proposerBlock, err := block.Parse(raw)
+	if err == nil {
+		raw = proposerBlock.Block()
+	}
+
+	version, err = w.codec.Unmarshal(raw, &genericBlock)
 	if err != nil {
 		return nil, err
 	}
 
-	blockID, err := util.AvalancheID(raw)
+	blockID, err = util.AvalancheID(raw)
 	if err != nil {
 		return nil, err
 	}
