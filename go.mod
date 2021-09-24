@@ -3,8 +3,8 @@ module github.com/figment-networks/avalanche-indexer
 go 1.16
 
 require (
-	github.com/ava-labs/avalanchego v1.5.3
-	github.com/ava-labs/coreth v0.6.3
+	github.com/ava-labs/avalanchego v1.6.0
+	github.com/ava-labs/coreth v0.7.0
 	github.com/ethereum/go-ethereum v1.10.8
 	github.com/figment-networks/indexing-engine v0.1.11
 	github.com/gin-gonic/gin v1.6.3
