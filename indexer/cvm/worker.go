@@ -9,6 +9,7 @@ import (
 
 	"github.com/ava-labs/avalanchego/codec"
 	"github.com/ava-labs/avalanchego/utils/formatting"
+	"github.com/ava-labs/avalanchego/vms/proposervm/block"
 	"github.com/ava-labs/coreth/plugin/evm"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/sirupsen/logrus"
@@ -129,6 +130,11 @@ func (w Worker) ProcessMessage(message *model.RawMessage) error {
 	raw, err = formatting.Decode(formatting.Hex, message.Data)
 	if err != nil {
 		return err
+	}
+
+	proposerBlock, err := block.Parse(raw)
+	if err == nil {
+		raw = proposerBlock.Block()
 	}
 
 	block := &corethTypes.Block{}
