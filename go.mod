@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ava-labs/avalanchego v1.7.0
-	github.com/ava-labs/coreth v0.7.5
+	github.com/ava-labs/coreth v0.8.0-rc.3
 	github.com/ethereum/go-ethereum v1.10.12
 	github.com/figment-networks/indexing-engine v0.1.11
 	github.com/gin-gonic/gin v1.6.3
