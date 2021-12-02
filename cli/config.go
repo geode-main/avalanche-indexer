@@ -8,24 +8,26 @@ import (
 )
 
 type Config struct {
-	Environment   string `json:"env"`
-	NetworkID     uint32 `json:"network_id"`
-	EvmNetworkID  uint32 `json:"eth_network_id"`
-	EvmChainID    uint32 `json:"evm_chain_id"`
-	AvaxAssetID   string `json:"avax_asset_id"`
-	DatabaseURL   string `json:"database_url"`
-	RPCEndpoint   string `json:"rpc_endpoint"`
-	ServerAddr    string `json:"server_addr"`
-	LogLevel      string `json:"log_level"`
-	LogSQL        bool   `json:"log_sql"`
-	SyncEnabled   bool   `json:"sync_enabled"`
-	SyncInterval  string `json:"sync_interval"`
-	PurgeEnabled  bool   `json:"purge_enabled"`
-	PurgeInterval string `json:"purge_interval"`
-	PurgePeriod   string `json:"purge_period"`
+	Environment       string `json:"env"`
+	NetworkID         uint32 `json:"network_id"`
+	EvmNetworkID      uint32 `json:"eth_network_id"`
+	EvmChainID        uint32 `json:"evm_chain_id"`
+	AvaxAssetID       string `json:"avax_asset_id"`
+	DatabaseURL       string `json:"database_url"`
+	RPCEndpoint       string `json:"rpc_endpoint"`
+	ServerAddr        string `json:"server_addr"`
+	LogLevel          string `json:"log_level"`
+	LogSQL            bool   `json:"log_sql"`
+	SyncEnabled       bool   `json:"sync_enabled"`
+	SyncInterval      string `json:"sync_interval"`
+	PurgeEnabled      bool   `json:"purge_enabled"`
+	PurgeInterval     string `json:"purge_interval"`
+	PurgePeriod       string `json:"purge_period"`
+	Ap5ActivationTime int64  `json:"ap5_activation_time"`
 
 	syncInterval  time.Duration
 	purgeInterval time.Duration
+	ap5time       *time.Time
 }
 
 func readConfig(path string) (*Config, error) {
@@ -75,6 +77,11 @@ func (c *Config) Validate() error {
 	}
 	c.purgeInterval = purgeDur
 
+	if c.Ap5ActivationTime > 0 {
+		ap5time := time.Unix(c.Ap5ActivationTime, 0)
+		c.ap5time = &ap5time
+	}
+
 	return nil
 }
 
@@ -84,4 +91,8 @@ func (c *Config) GetSyncInterval() time.Duration {
 
 func (c *Config) GetPurgeInterval() time.Duration {
 	return c.purgeInterval
+}
+
+func (c *Config) GetAP5ActivationTime() *time.Time {
+	return c.ap5time
 }

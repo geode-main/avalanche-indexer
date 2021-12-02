@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/ava-labs/avalanchego/version"
 	"github.com/sirupsen/logrus"
 
 	"github.com/figment-networks/avalanche-indexer/cli/cmd"
@@ -64,6 +65,7 @@ func Run() {
 	var command cliCommand
 
 	shared.SetBech32HRP(config.NetworkID)
+	shared.SetAp5ActivationTime(version.GetApricotPhase5Time(config.NetworkID))
 
 	switch cliOpts.command {
 	case "status":
