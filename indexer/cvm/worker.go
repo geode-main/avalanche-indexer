@@ -188,6 +188,7 @@ func (w Worker) prepareBlock(ethBlock *corethTypes.Block) (*model.Block, error) 
 func (w Worker) prepareTxs(block *corethTypes.Block) ([]model.Transaction, error) {
 	blockHash := block.Hash().String()
 	blockHeight := block.Number().Uint64()
+	blockTime := time.Unix(int64(block.Time()), 0)
 
 	rawBytes := block.ExtData()
 	if len(rawBytes) == 0 {
@@ -233,7 +234,7 @@ func (w Worker) prepareTxs(block *corethTypes.Block) ([]model.Transaction, error
 		tx.Status = model.TxStatusAccepted
 		tx.Block = &blockHash
 		tx.BlockHeight = &blockHeight
-		tx.Timestamp = time.Unix(int64(block.Time()), 0)
+		tx.Timestamp = blockTime
 
 		resultTxs = append(resultTxs, *tx)
 	}
