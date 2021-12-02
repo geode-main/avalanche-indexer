@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math/big"
-	"reflect"
 	"time"
 
 	"github.com/ava-labs/avalanchego/codec"
@@ -147,12 +146,12 @@ func (w Worker) ProcessMessage(message *model.RawMessage) error {
 		return err
 	}
 
-	atomicTx, err := w.prepareTx(block)
+	atomicTxs, err := w.prepareTxs(block)
 	if err != nil {
 		return err
 	}
-	if atomicTx != nil {
-		if err := w.saveAtomicTx(atomicTx); err != nil {
+	for _, tx := range atomicTxs {
+		if err := w.saveAtomicTx(&tx); err != nil {
 			return err
 		}
 	}
@@ -186,49 +185,65 @@ func (w Worker) prepareBlock(ethBlock *corethTypes.Block) (*model.Block, error) 
 	}, nil
 }
 
-func (w Worker) prepareTx(block *corethTypes.Block) (*model.Transaction, error) {
+func (w Worker) prepareTxs(block *corethTypes.Block) ([]model.Transaction, error) {
+	blockHash := block.Hash().String()
+	blockHeight := block.Number().Uint64()
+	blockTime := time.Unix(int64(block.Time()), 0)
+
 	rawBytes := block.ExtData()
 	if len(rawBytes) == 0 {
 		return nil, nil
 	}
 
-	evmTx := &evm.Tx{}
+	var (
+		txs       []evm.Tx
+		resultTxs []model.Transaction
+	)
 
-	version, err := w.codec.Unmarshal(rawBytes, evmTx)
-	if err != nil {
-		return nil, err
+	if shared.Ap5ActivationTime > 0 && block.Time() > shared.Ap5ActivationTime {
+		_, err := w.codec.Unmarshal(rawBytes, &txs)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		tx := evm.Tx{}
+		_, err := w.codec.Unmarshal(rawBytes, &tx)
+		if err != nil {
+			return nil, err
+		}
+		txs = append(txs, tx)
 	}
 
-	unsignedBytes, err := w.codec.Marshal(version, &evmTx.UnsignedAtomicTx)
-	if err != nil {
-		return nil, err
+	for _, evmTx := range txs {
+		err := evmTx.Sign(w.codec, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var tx *model.Transaction
+
+		switch typedTx := evmTx.UnsignedAtomicTx.(type) {
+		case *evm.UnsignedImportTx:
+			tx, err = w.prepareAtomicImportTx(typedTx)
+		case *evm.UnsignedExportTx:
+			tx, err = w.prepareAtomicExportTx(typedTx)
+		default:
+			err = fmt.Errorf("unsupported transaction type: %T", tx)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		tx.Status = model.TxStatusAccepted
+		tx.Block = &blockHash
+		tx.BlockHeight = &blockHeight
+		tx.Timestamp = blockTime
+
+		resultTxs = append(resultTxs, *tx)
 	}
-	evmTx.Initialize(unsignedBytes, rawBytes)
 
-	var tx *model.Transaction
-
-	switch typedTx := evmTx.UnsignedAtomicTx.(type) {
-	case *evm.UnsignedImportTx:
-		tx, err = w.prepareAtomicImportTx(typedTx)
-	case *evm.UnsignedExportTx:
-		tx, err = w.prepareAtomicExportTx(typedTx)
-	default:
-		err = fmt.Errorf("unsupported transaction type: %s", reflect.TypeOf(tx).String())
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	blockHash := block.Hash().String()
-	blockHeight := block.Number().Uint64()
-
-	tx.Status = model.TxStatusAccepted
-	tx.Block = &blockHash
-	tx.BlockHeight = &blockHeight
-	tx.Timestamp = time.Unix(int64(block.Time()), 0)
-
-	return tx, nil
+	return resultTxs, nil
 }
 
 func (w Worker) saveAtomicTx(tx *model.Transaction) error {
