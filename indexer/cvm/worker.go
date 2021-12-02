@@ -231,6 +231,10 @@ func (w Worker) prepareTxs(block *corethTypes.Block) ([]model.Transaction, error
 			err = fmt.Errorf("unsupported transaction type: %T", tx)
 		}
 
+		if err != nil {
+			return nil, err
+		}
+
 		tx.Status = model.TxStatusAccepted
 		tx.Block = &blockHash
 		tx.BlockHeight = &blockHeight
